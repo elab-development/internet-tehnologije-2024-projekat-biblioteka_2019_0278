@@ -40,6 +40,7 @@ class KnjigaController extends Controller
             'kolicina'=>$request->kolicina
         ]);
         
+
     }
 
     /**
@@ -47,7 +48,19 @@ class KnjigaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'naslov' => 'required|string|max:255',
+            'pisac' => 'required|string|max:255',
+            'kolicina' => 'required|integer|min:1',
+        ]);
+
+        $knjiga = Knjiga::create([
+            'naslov' => $request->naslov,
+            'pisac' => $request->pisac,
+            'kolicina' => $request->kolicina,
+        ]);
+
+        return response()->json(['message' => 'Knjiga uspešno dodata', 'knjiga' => $knjiga], 201);
     }
 
     /**
