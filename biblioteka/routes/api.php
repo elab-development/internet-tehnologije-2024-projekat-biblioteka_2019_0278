@@ -8,7 +8,12 @@ use App\Http\Controllers\API\PozajmicaController;
 use App\Http\Controllers\API\ClanController;
 
 Route::get('/knjige', [KnjigaController::class, 'index']);
+Route::get('/knjige/{id}', [KnjigaController::class, 'show'])->middleware('auth:sanctum');
+Route::post('/knjige', [KnjigaController::class, 'store'])->middleware('auth:sanctum');
+
 Route::post('/vratiKnjigu/{id}', [PozajmicaController::class, 'vratiKnjigu'])->middleware('auth:sanctum');
 Route::resource('/pozajmice', PozajmicaController::class)->middleware('auth:sanctum');
-
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
