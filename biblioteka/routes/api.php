@@ -17,3 +17,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
+Route::resource('/admin/clanovi', ClanController::class)->middleware('auth:admin-api');
+Route::post('/admin/pozajmice', [PozajmicaController::class, 'storeAdmin'])->middleware('auth:admin-api');
+Route::get('/admin/pozajmice', [PozajmicaController::class, 'indexAdmin'])->middleware('auth:admin-api');
+Route::post('/admin/logout', [AuthController::class, 'logout'])->middleware('auth:admin-api');
+Route::post('/admin/login', [AuthController::class, 'loginAdmin']);
