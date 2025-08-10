@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Pozajmica;
 use App\Models\Clan;
 use App\Models\Knjiga;
+use App\Http\Resources\PozajmicaCollection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -22,7 +23,7 @@ class PozajmicaController extends Controller
             return response()->json('Clan nije registrovan', 404);
         }
         $pozajmice = Pozajmica::where('clan_id',$clan_id)->get();
-        return response()->json($pozajmice);
+        return new PozajmicaCollection($pozajmice);
     }
     public function indexAdmin()
     {

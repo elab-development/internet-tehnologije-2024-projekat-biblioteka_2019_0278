@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Clan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ClanCollection;
 
 
 class ClanController extends Controller
@@ -15,7 +16,7 @@ class ClanController extends Controller
     public function index()
     {
         $clanovi = Clan::all();
-        return response()->json($clanovi);
+        return new ClanCollection($clanovi);
     }
 
     /**

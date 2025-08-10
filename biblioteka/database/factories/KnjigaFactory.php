@@ -17,7 +17,10 @@ class KnjigaFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'naslov' => $this->faker->sentence(3),
+            'pisac' => $this->faker->name(),
+            'kolicina' => $this->faker->numberBetween(1, 100),
+            // 'id' is auto-incremented by the database, so we don't need to define it here
         ];
     }
 }

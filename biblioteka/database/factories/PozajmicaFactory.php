@@ -17,7 +17,10 @@ class PozajmicaFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'knjiga_id' => \App\Models\Knjiga::factory(),
+            'clan_id' => \App\Models\Clan::factory(),
+            'datum_pozajmice' => $this->faker->dateTimeBetween('-1 month', 'now'),
+            'datum_vracanja' => $this->faker->dateTimeBetween('now', '+1 month'),
         ];
     }
 }
