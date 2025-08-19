@@ -14,7 +14,8 @@ function Navigacija({}) {
     navigate("/login");
   };
   const izlogujAdmin = () => {
-    localStorage.removeItem("tokenAdmin");
+    console.log("remove admin token");
+    localStorage.removeItem("adminToken");
     navigate("/admin/login");
   };
 
@@ -49,9 +50,8 @@ function Navigacija({}) {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href="/admin/">Početna stranica</Nav.Link>
-            {loggedInAdmin ? (
-              <Nav.Link href="/admin/pozajmice">Pozajmice</Nav.Link>
-            ) : null}
+
+            <Nav.Link href="/admin/clanovi">Pregled članova</Nav.Link>
 
             <Nav.Link onClick={izlogujAdmin}>Logout</Nav.Link>
           </Nav>

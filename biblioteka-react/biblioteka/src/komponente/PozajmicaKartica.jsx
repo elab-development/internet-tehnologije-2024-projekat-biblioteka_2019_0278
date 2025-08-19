@@ -4,8 +4,8 @@ import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 
 function PozajmicaKartica({ pozajmica, osveziStranicu }) {
-  const token = localStorage.getItem("token");
-
+  const token = localStorage.getItem("adminToken");
+  const adminLoggedIn = localStorage.getItem("adminToken") !== null;
   const vratiKnjigu = async () => {
     try {
       const response = await fetch(
@@ -80,7 +80,7 @@ function PozajmicaKartica({ pozajmica, osveziStranicu }) {
             ) : null}
           </tbody>
         </Table>
-        {pozajmica.datum_vracanja ? null : (
+        {!(adminLoggedIn && !pozajmica.datum_vracanja) ? null : (
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Button onClick={vratiKnjigu} variant="primary">
               Vrati

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import PozajmicaKartica from "./komponente/PozajmicaKartica";
 import Ucitavanje from "./komponente/Ucitavanje";
+import { useParams } from "react-router";
 
-function PregledPozajmica({}) {
+function PregledPozajmicaAdmin({}) {
   const [pozajmice, setPozajmice] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
-
+  const token = localStorage.getItem("adminToken");
+    const {id} = useParams();
   const vratiPozajmice = () => {
-    fetch("http://127.0.0.1:8000/api/pozajmice", {
+    fetch(`http://localhost:8000/api/admin/clanovi/${id}/pozajmice`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -51,4 +52,4 @@ function PregledPozajmica({}) {
   );
 }
 
-export default PregledPozajmica;
+export default PregledPozajmicaAdmin;

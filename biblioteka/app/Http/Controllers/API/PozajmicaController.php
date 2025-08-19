@@ -34,6 +34,13 @@ class PozajmicaController extends Controller
         }
         return response()->json($pozajmice);
     }
+    public function prikaziPozajmiceZaClana(Request $request, $clan_id)
+    {
+       
+        
+       $pozajmice = Pozajmica::with('knjiga')->where('clan_id',$clan_id)->get();
+        return new PozajmicaCollection($pozajmice);
+    }
 
     /**
      * Show the form for creating a new resource.

@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import PregledKnjiga from "./PregledKnjiga";
 import PregledPozajmica from "./PregledPozajmica";
 import AdminLogin from "./adminLogin";
+import PregledClanova from "./PregledClanova";
+import PregledPozajmicaAdmin from "./PregledPozajmicaAdmin";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -31,7 +33,9 @@ function App() {
       });
   };
 
-  useEffect(() => {vratiKnjige()}, []);
+  useEffect(() => {
+    vratiKnjige();
+  }, []);
 
   const handleLogin = (token) => {
     if (!token) {
@@ -51,14 +55,28 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<PregledKnjiga osveziStranicu={vratiKnjige} knjige={knjige} loggedIn={loggedIn} />}
+          element={
+            <PregledKnjiga
+              osveziStranicu={vratiKnjige}
+              knjige={knjige}
+              loggedIn={loggedIn}
+            />
+          }
         />
         <Route
           path="/login"
           element={<Login onLogin={handleLogin} loginError={loginError} />}
         />
-        <Route path="/pozajmice" element={<PregledPozajmica token={token} />} />
-        <Route path="/admin/login" element={<AdminLogin onAdminLogin={handleLogin} loginError={loginError}/>} />
+        <Route path="/pozajmice" element={<PregledPozajmica />} />
+        <Route
+          path="/admin/login"
+          element={
+            <AdminLogin onAdminLogin={handleLogin} loginError={loginError} />
+          }
+        />
+        <Route path="/admin/clanovi/" element={<PregledClanova />}>
+          <Route path=":id/pozajmice" element={<PregledPozajmicaAdmin />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

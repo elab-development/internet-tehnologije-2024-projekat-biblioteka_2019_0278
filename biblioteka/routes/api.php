@@ -11,7 +11,7 @@ Route::get('/knjige', [KnjigaController::class, 'index']);
 Route::get('/knjige/{id}', [KnjigaController::class, 'show'])->middleware('auth:sanctum');
 
 
-Route::post('/vratiKnjigu/{id}', [PozajmicaController::class, 'vratiKnjigu'])->middleware('auth:sanctum');
+Route::post('/vratiKnjigu/{id}', [PozajmicaController::class, 'vratiKnjigu'])->middleware('auth:admin-api');
 Route::resource('/pozajmice', PozajmicaController::class)->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -21,5 +21,6 @@ Route::post('/admin/knjige', [KnjigaController::class, 'store'])->middleware('au
 Route::resource('/admin/clanovi', ClanController::class)->middleware('auth:admin-api');
 Route::post('/admin/pozajmice', [PozajmicaController::class, 'storeAdmin'])->middleware('auth:admin-api');
 Route::get('/admin/pozajmice', [PozajmicaController::class, 'indexAdmin'])->middleware('auth:admin-api');
+Route::get('/admin/clanovi/{clan_id}/pozajmice', [PozajmicaController::class, 'prikaziPozajmiceZaClana'])->middleware('auth:admin-api');
 Route::post('/admin/logout', [AuthController::class, 'logout'])->middleware('auth:admin-api');
 Route::post('/admin/login', [AuthController::class, 'loginAdmin']);
