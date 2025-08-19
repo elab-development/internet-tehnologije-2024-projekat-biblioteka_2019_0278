@@ -13,7 +13,7 @@ function App() {
   const [loginError, setLoginError] = useState("");
   const [knjige, setKnjige] = useState([]);
 
-  useEffect(() => {
+  const vratiKnjige = () => {
     fetch("http://127.0.0.1:8000/api/knjige")
       .then((response) => {
         if (!response.ok) {
@@ -28,7 +28,9 @@ function App() {
       .catch((error) => {
         console.error("There was a problem with the fetch operation:", error);
       });
-  }, []);
+  };
+
+  useEffect(() => {vratiKnjige()}, []);
 
   const handleLogin = (token) => {
     if (!token) {
@@ -48,7 +50,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<PregledKnjiga knjige={knjige} loggedIn={loggedIn} />}
+          element={<PregledKnjiga osveziStranicu={vratiKnjige} knjige={knjige} loggedIn={loggedIn} />}
         />
         <Route
           path="/login"
