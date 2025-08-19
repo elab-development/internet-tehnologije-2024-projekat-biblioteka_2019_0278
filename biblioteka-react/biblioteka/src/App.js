@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 import PregledKnjiga from "./PregledKnjiga";
 import PregledPozajmica from "./PregledPozajmica";
+import AdminLogin from "./adminLogin";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -57,6 +58,7 @@ function App() {
           element={<Login onLogin={handleLogin} loginError={loginError} />}
         />
         <Route path="/pozajmice" element={<PregledPozajmica token={token} />} />
+        <Route path="/admin/login" element={<AdminLogin onAdminLogin={handleLogin} loginError={loginError}/>} />
       </Routes>
     </BrowserRouter>
   );

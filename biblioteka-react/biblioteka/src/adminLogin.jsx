@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onLogin, loginError }) => {
+const AdminLogin = ({ onAdminLogin, loginError }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -22,7 +22,7 @@ const Login = ({ onLogin, loginError }) => {
     e.preventDefault();
     
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/login', {
+      const response = await fetch('http://127.0.0.1:8000/api/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,47 +35,44 @@ const Login = ({ onLogin, loginError }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Login failed:', errorData);
-        onLogin(null);
+        console.error('Admin login failed:', errorData);
+        onAdminLogin(null);
         return;
       }
 
       const data = await response.json();
 
       if (data.access_token) {
-        onLogin(data.access_token);
-        console.log('Login successful:', data.access_token);
-        navigate('/'); // Redirect to home page after successful login
+        localStorage.setItem('adminToken', data.access_token);
+        onAdminLogin(data.access_token);
+        console.log('Admin login successful:', data.access_token);
+        navigate('/admin'); 
       } else {
-        console.error('Login failed:', data);
-        onLogin(null);
+        console.error('Admin login failed:', data);
+        onAdminLogin(null);
       }
     } catch (error) {
-      console.error('Login error:', error);
-      onLogin(null);
+      console.error('Admin login error:', error);
+      onAdminLogin(null);
     }
-  };
-
-  // Redirect to admin login page
-  const redirectToAdmin = () => {
-    navigate('/admin/login');
   };
 
   return (
     <div>
+      <h2>Admin Login</h2>
       <Form onSubmit={login}>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Group className="mb-3" controlId="formAdminEmail">
           <Form.Label>Email</Form.Label>
           <Form.Control 
             type="email" 
-            placeholder="Unesi email"
+            placeholder="Unesi admin email"
             name="email"
             value={formData.email}
             onChange={handleChange}
           />
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Group className="mb-3" controlId="formAdminPassword">
           <Form.Label>Šifra</Form.Label>
           <Form.Control 
             type="password" 
@@ -90,17 +87,11 @@ const Login = ({ onLogin, loginError }) => {
         </Form.Group>
 
         <Button variant="primary" type="submit">
-          Uloguj se
+          Uloguj se kao admin
         </Button>
       </Form>
-
-      <hr />
-
-      <Button variant="secondary" onClick={redirectToAdmin} style={{ marginTop: '10px' }}>
-        Admin Login
-      </Button>
     </div>
   );
 };
 
-export default Login;
+export default AdminLogin;
