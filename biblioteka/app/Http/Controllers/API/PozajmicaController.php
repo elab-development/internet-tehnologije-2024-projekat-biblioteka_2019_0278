@@ -22,7 +22,7 @@ class PozajmicaController extends Controller
         if (!$clan_id) {
             return response()->json('Clan nije registrovan', 404);
         }
-        $pozajmice = Pozajmica::where('clan_id',$clan_id)->get();
+        $pozajmice = Pozajmica::with('knjiga')->where('clan_id',$clan_id)->get();
         return new PozajmicaCollection($pozajmice);
     }
     public function indexAdmin()
