@@ -1,7 +1,9 @@
 import React from 'react'
 import KnjigaKartica from './komponente/KnjigaKartica'
 
-function PregledKnjiga({knjige, loggedIn}) {
+function PregledKnjiga({knjige}) {
+
+  const loggedIn = localStorage.getItem("token") !== null;
 
   return (
     <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'normal'}}>

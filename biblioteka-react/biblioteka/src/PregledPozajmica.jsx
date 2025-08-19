@@ -7,7 +7,7 @@ function PregledPozajmica({}) {
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
+  const vratiPozajmice = () => {
     fetch("http://127.0.0.1:8000/api/pozajmice", {
       method: "GET",
       headers: {
@@ -29,6 +29,10 @@ function PregledPozajmica({}) {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+  };
+
+  useEffect(() => {
+    vratiPozajmice();
   }, []);
 
   if (loading) {
@@ -38,11 +42,9 @@ function PregledPozajmica({}) {
     <div
       style={{ display: "flex", flexWrap: "wrap", justifyContent: "normal" }}
     >
-      
       {pozajmice.map((pozajmica) => (
-        <PozajmicaKartica key={pozajmica.id} pozajmica={pozajmica} />
+        <PozajmicaKartica key={pozajmica.id} pozajmica={pozajmica} osveziStranicu={vratiPozajmice}/>
       ))}
-      
     </div>
   ) : (
     <p>Nema pozajmica za prikaz.</p>
