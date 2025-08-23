@@ -6,6 +6,7 @@ import Table from "react-bootstrap/Table";
 function KnjigaKartica({ knjiga, osveziStranicu}) {
   const token = localStorage.getItem("token");
   const loggedIn = localStorage.getItem("token") !== null;
+  const loggedInAdmin = localStorage.getItem("adminToken") !== null;
 
   const kreirajPozajmicu = async () => {
     
@@ -40,28 +41,19 @@ function KnjigaKartica({ knjiga, osveziStranicu}) {
 
 
   return (
-    <Card style={{ width: "18rem", textAlign: "left", display: "flex" }}>
-      <Card.Body style={{ textAlign: "justify" }}>
-        <Card.Title style={{ textAlign: "left" }}>{knjiga.naslov}</Card.Title>
-        <Table
-          style={{
-            width: "100%",
-            textAlign: "justify",
-            borderCollapse: "collapse",
-            margin: "0 auto",
-          }}
-        >
-          <thead>
-            <tr>
-              <th colSpan="2">Detalji knjige</th>
-            </tr>
-          </thead>
+    <Card className="library-card">
+      <Card.Body>
+        <Card.Title className="text-truncate" title={knjiga.naslov}>
+          {knjiga.naslov}
+        </Card.Title>
+        
+        <Table className="mb-3">
           <tbody>
             <tr>
-              <td>
+              <td style={{ width: "40%" }}>
                 <strong>Autor:</strong>
               </td>
-              <td>{knjiga.pisac}</td>
+              <td className="text-break">{knjiga.pisac}</td>
             </tr>
             <tr>
               <td>
@@ -71,11 +63,8 @@ function KnjigaKartica({ knjiga, osveziStranicu}) {
             </tr>
           </tbody>
         </Table>
-        {loggedIn ? (
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Button onClick={kreirajPozajmicu} variant="primary">Pozajmi</Button>
-          </div>
-        ) : null}
+        
+        
       </Card.Body>
     </Card>
   );

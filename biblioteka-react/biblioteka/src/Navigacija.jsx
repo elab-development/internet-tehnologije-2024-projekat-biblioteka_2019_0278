@@ -2,7 +2,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 function Navigacija({}) {
   const loggedIn = localStorage.getItem("token") !== null;
@@ -23,16 +23,16 @@ function Navigacija({}) {
     return (
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
-          <Navbar.Brand href="#home">Biblioteka</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/">Biblioteka</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="/">Početna stranica</Nav.Link>
+              <Nav.Link as={Link} to="/">Početna stranica</Nav.Link>
               {loggedIn ? (
-                <Nav.Link href="/pozajmice">Pozajmice</Nav.Link>
+                <Nav.Link as={Link} to="/pozajmice">Pozajmice</Nav.Link>
               ) : null}
               {!loggedIn ? (
-                <Nav.Link href="/login">Login</Nav.Link>
+                <Nav.Link as={Link} to="/login">Login</Nav.Link>
               ) : (
                 <Nav.Link onClick={izloguj}>Logout</Nav.Link>
               )}
@@ -45,13 +45,13 @@ function Navigacija({}) {
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
-        <Navbar.Brand href="/admin/">Biblioteka Admin</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/admin">Biblioteka Admin</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/admin/">Početna stranica</Nav.Link>
+            <Nav.Link as={Link} to="/admin">Početna stranica</Nav.Link>
 
-            <Nav.Link href="/admin/clanovi">Pregled članova</Nav.Link>
+            <Nav.Link as={Link} to="/admin/clanovi">Pregled članova</Nav.Link>
 
             <Nav.Link onClick={izlogujAdmin}>Logout</Nav.Link>
           </Nav>

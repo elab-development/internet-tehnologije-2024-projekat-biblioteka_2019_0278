@@ -15,6 +15,7 @@ function App() {
   const [token, setToken] = useState("");
   const [loginError, setLoginError] = useState("");
   const [knjige, setKnjige] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const vratiKnjige = () => {
     fetch("http://127.0.0.1:8000/api/knjige")
@@ -27,6 +28,7 @@ function App() {
       .then((knjigeJson) => {
         console.log(knjigeJson.data);
         setKnjige(knjigeJson.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("There was a problem with the fetch operation:", error);
@@ -60,6 +62,7 @@ function App() {
               osveziStranicu={vratiKnjige}
               knjige={knjige}
               loggedIn={loggedIn}
+              loading={loading}
             />
           }
         />
@@ -74,9 +77,19 @@ function App() {
             <AdminLogin onAdminLogin={handleLogin} loginError={loginError} />
           }
         />
-        <Route path="/admin/clanovi/" element={<PregledClanova />}>
-          <Route path=":id/pozajmice" element={<PregledPozajmicaAdmin />} />
-        </Route>
+       <Route
+          path="/admin/"
+          element={
+            <PregledKnjiga
+              osveziStranicu={vratiKnjige}
+              knjige={knjige}
+              loggedIn={loggedIn}
+              loading={loading}
+            />
+          }
+        />
+        <Route path="/admin/clanovi/" element={<PregledClanova  />}/>
+        <Route path="/admin/clanovi/:id/pozajmice" element={<PregledPozajmicaAdmin/>} />
       </Routes>
     </BrowserRouter>
   );

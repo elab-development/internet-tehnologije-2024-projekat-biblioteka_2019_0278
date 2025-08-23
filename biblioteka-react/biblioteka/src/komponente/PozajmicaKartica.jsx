@@ -25,7 +25,7 @@ function PozajmicaKartica({ pozajmica, osveziStranicu }) {
       }
       if (response.ok) {
         alert("Knjiga je uspešno vraćena.");
-        osveziStranicu(); // Refresh the page to reflect changes
+        osveziStranicu();
       } else {
         alert("Došlo je do greške prilikom vraćanja knjige.");
       }
@@ -39,24 +39,10 @@ function PozajmicaKartica({ pozajmica, osveziStranicu }) {
   };
 
   return (
-    <Card style={{ width: "18rem", textAlign: "left", display: "flex" }}>
-      <Card.Body style={{ textAlign: "justify" }}>
-        <Card.Title style={{ textAlign: "left" }}>
-          {pozajmica.knjiga.naslov}
-        </Card.Title>
-        <Table
-          style={{
-            width: "100%",
-            textAlign: "justify",
-            borderCollapse: "collapse",
-            margin: "0 auto",
-          }}
-        >
-          <thead>
-            <tr>
-              <th colSpan="2">Detalji knjige</th>
-            </tr>
-          </thead>
+    <Card className="library-card" border={pozajmica.datum_vracanja ? "success" : "danger"}>
+      <Card.Body>
+        <Card.Title>{pozajmica.knjiga.naslov}</Card.Title>
+        <Table>
           <tbody>
             <tr>
               <td>
@@ -70,23 +56,23 @@ function PozajmicaKartica({ pozajmica, osveziStranicu }) {
               </td>
               <td>{pozajmica.datum_pozajmice}</td>
             </tr>
-            {pozajmica.datum_vracanja ? (
-              <tr>
-                <td>
-                  <strong>Datum vraćanja:</strong>
-                </td>
-                <td>{pozajmica.datum_vracanja}</td>
-              </tr>
-            ) : null}
+            <tr>
+              <td>
+                <strong>Datum vraćanja:</strong>
+              </td>
+              <td>
+              {pozajmica.datum_vracanja ? (
+                pozajmica.datum_vracanja
+              ) : "Knjiga nije vraćena"}
+              </td>
+            </tr>
           </tbody>
         </Table>
-        {!(adminLoggedIn && !pozajmica.datum_vracanja) ? null : (
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          {!(adminLoggedIn && !pozajmica.datum_vracanja) ? null : (
             <Button onClick={vratiKnjigu} variant="primary">
               Vrati
             </Button>
-          </div>
-        )}
+          )}
       </Card.Body>
     </Card>
   );

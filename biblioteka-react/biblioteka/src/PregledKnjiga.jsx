@@ -1,19 +1,36 @@
-import React from 'react'
-import KnjigaKartica from './komponente/KnjigaKartica'
-
-function PregledKnjiga({knjige, osveziStranicu}) {
-
+import React from "react";
+import KnjigaKartica from "./komponente/KnjigaKartica";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Ucitavanje from "./komponente/Ucitavanje";
+function PregledKnjiga({ knjige, osveziStranicu, loading }) {
   const loggedIn = localStorage.getItem("token") !== null;
 
-  return (
-    <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'normal'}}>
-        {knjige? knjige.map((knjiga) => (
-          <KnjigaKartica key={knjiga.id} knjiga={knjiga} loggedIn={loggedIn} osveziStranicu={osveziStranicu} />
-        )): null}
-        </div>
-       
-
-  )
+  if (loading) {
+    return <Ucitavanje />;
+  } else {
+    return (
+      <div>
+        <Container>
+          <Row xs={1}>
+            {knjige
+              ? knjige.map((knjiga) => (
+                  <Col>
+                    {" "}
+                    <KnjigaKartica
+                      key={knjiga.id}
+                      knjiga={knjiga}
+                      osveziStranicu={osveziStranicu}
+                    />
+                  </Col>
+                ))
+              : null}
+          </Row>
+        </Container>
+      </div>
+    );
+  }
 }
 
-export default PregledKnjiga
+export default PregledKnjiga;
