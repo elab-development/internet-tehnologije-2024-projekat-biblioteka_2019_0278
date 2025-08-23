@@ -56,11 +56,21 @@ function PregledPozajmicaAdmin({ clanId }) {
   return pozajmice.length > 0 ? (
     <Container>
       <Row xs={1} md={1}>
-        {pozajmice.map((pozajmica) => (
-          <Col key={pozajmica.id}>
-            <PozajmicaKartica key={pozajmica.id} pozajmica={pozajmica} osveziStranicu={vratiPozajmice}/>{" "}
-          </Col>
-        ))}
+        {pozajmice
+          .sort((a, b) => {
+            if (!a.datum_vracanja && b.datum_vracanja) return -1;
+            if (a.datum_vracanja && !b.datum_vracanja) return 1;
+            return 0;
+          })
+          .map((pozajmica) => (
+            <Col key={pozajmica.id}>
+              <PozajmicaKartica
+                key={pozajmica.id}
+                pozajmica={pozajmica}
+                osveziStranicu={vratiPozajmice}
+              />{" "}
+            </Col>
+          ))}
       </Row>
     </Container>
   ) : (

@@ -15,17 +15,21 @@ class KnjigaController extends Controller
      */
     public function index()
     {
-        
         $titleQuery = request()->titleQuery;
-        if(!$titleQuery) {
-        return Knjiga::paginate(5);
+        $perPage = 5;
 
+        if (!$titleQuery) {
+            $paginated = Knjiga::paginate($perPage);
+            return new KnjigaCollection($paginated);
         }
-        $knjiga = Knjiga::where('naslov', 'like', '%' . $titleQuery . '%')->get();
-        if($knjiga->isEmpty()) {
+
+        $paginated = Knjiga::where('naslov', 'like', '%' . $titleQuery . '%')->paginate($perPage);
+
+        if ($paginated->isEmpty()) {
             return response()->json('Ne postoji knjiga sa naslovom po datom kriterijumu.', 404);
         }
-        return new KnjigaCollection($knjiga);
+
+        return new KnjigaCollection($paginated);
     }
 
     /**

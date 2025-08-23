@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
+import ModalPoruka from "./ModalPoruka";
 
 function PozajmicaKartica({ pozajmica, osveziStranicu }) {
   const token = localStorage.getItem("adminToken");
   const adminLoggedIn = localStorage.getItem("adminToken") !== null;
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalPoruka, setModalPoruka] = useState("");
+
   const vratiKnjigu = async () => {
     try {
       const response = await fetch(
@@ -21,60 +26,70 @@ function PozajmicaKartica({ pozajmica, osveziStranicu }) {
       );
 
       if (!response.ok) {
-        throw new Error("Request failed with status " + response.status);
+        setModalPoruka("Došlo je do greške prilikom vraćanja knjige.");
+        setShowModal(true);
+        return;
       }
       if (response.ok) {
-        alert("Knjiga je uspešno vraćena.");
+        setModalPoruka("Knjiga je uspešno vraćena.");
+        setShowModal(true);
         osveziStranicu();
-      } else {
-        alert("Došlo je do greške prilikom vraćanja knjige.");
       }
       const data = await response.json();
       console.log("Response:", data);
 
       return data;
     } catch (error) {
+      setModalPoruka("Došlo je do greške prilikom vraćanja knjige.");
+      setShowModal(true);
       console.error("Error:", error);
     }
   };
 
   return (
-    <Card className="library-card" border={pozajmica.datum_vracanja ? "success" : "danger"}>
-      <Card.Body>
-        <Card.Title>{pozajmica.knjiga.naslov}</Card.Title>
-        <Table>
-          <tbody>
-            <tr>
-              <td>
-                <strong>Autor:</strong>
-              </td>
-              <td>{pozajmica.knjiga.pisac}</td>
-            </tr>
-            <tr>
-              <td>
-                <strong>Datum pozajmljivanja:</strong>
-              </td>
-              <td>{pozajmica.datum_pozajmice}</td>
-            </tr>
-            <tr>
-              <td>
-                <strong>Datum vraćanja:</strong>
-              </td>
-              <td>
-              {pozajmica.datum_vracanja ? (
-                pozajmica.datum_vracanja
-              ) : "Knjiga nije vraćena"}
-              </td>
-            </tr>
-          </tbody>
-        </Table>
+    <>
+      <Card className="library-card" border={pozajmica.datum_vracanja ? "success" : "danger"}>
+        <Card.Body>
+          <Card.Title>{pozajmica.knjiga.naslov}</Card.Title>
+          <Table>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>Autor:</strong>
+                </td>
+                <td>{pozajmica.knjiga.pisac}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Datum pozajmljivanja:</strong>
+                </td>
+                <td>{pozajmica.datum_pozajmice}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Datum vraćanja:</strong>
+                </td>
+                <td>
+                  {pozajmica.datum_vracanja ? (
+                    pozajmica.datum_vracanja
+                  ) : "Knjiga nije vraćena"}
+                </td>
+              </tr>
+            </tbody>
+          </Table>
           {!(adminLoggedIn && !pozajmica.datum_vracanja) ? null : (
             <Button onClick={vratiKnjigu} variant="primary">
               Vrati
             </Button>
           )}
-      </Card.Body>
-    </Card>
+        </Card.Body>
+      </Card>
+      <ModalPoruka
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        poruka={modalPoruka}
+      />
+    </>
   );
 }
 
