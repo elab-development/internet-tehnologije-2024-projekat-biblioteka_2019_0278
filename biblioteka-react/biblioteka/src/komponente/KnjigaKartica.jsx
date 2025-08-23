@@ -47,6 +47,41 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
     }
   };
 
+    const kreirajRezervaciju = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/rezervacije", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          knjiga_id: knjiga.id
+    
+        }),
+      });
+
+      if (!response.ok) {
+        const responseBody = await response.json();
+        console.error("Response status:", response.status);
+        console.error("Response status:", responseBody.message);
+
+        throw new Error(responseBody.message ? responseBody.message: "Greška prilikom rezervacije knjige.");
+      }
+
+      setModalPoruka("Knjiga je uspešno rezervisana.");
+      setShowModal(true);
+
+      const data = await response.json();
+      console.log("Response:", data);
+      return data;
+    } catch (error) {
+      setModalPoruka(error.message || "Greška prilikom rezervacije knjige.");
+      setShowModal(true);
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <>
       <Card className="library-card">
@@ -75,6 +110,11 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
           {loggedInAdmin && clanId && (
             <Button variant="primary" onClick={kreirajPozajmicu}>
               Izaberi
+            </Button>
+          )}
+          {loggedIn && !loggedInAdmin && (
+            <Button variant="primary" onClick={kreirajRezervaciju}>
+              Kreiraj rezervaciju
             </Button>
           )}
         </Card.Body>

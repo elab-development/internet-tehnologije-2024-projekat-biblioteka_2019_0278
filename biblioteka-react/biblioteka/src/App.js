@@ -9,6 +9,7 @@ import PregledPozajmica from "./PregledPozajmica";
 import AdminLogin from "./adminLogin";
 import PregledClanova from "./PregledClanova";
 import PregledPozajmicaAdmin from "./PregledPozajmicaAdmin";
+import PregledRezervacija from "./PregledRezervacija";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -44,6 +45,7 @@ function App() {
           element={<Login onLogin={handleLogin} loginError={loginError} />}
         />
         <Route path="/pozajmice" element={<PregledPozajmica />} />
+        <Route path="/rezervacije" element={<PregledRezervacija />} />
         <Route
           path="/admin/login"
           element={
@@ -62,6 +64,9 @@ function App() {
         <Route path="/admin/clanovi/:id/pozajmice" element={<PregledPozajmicaAdmin/>} />
         <Route path="/admin/clanovi/:id/knjige" element={<PregledKnjiga 
               loggedIn={loggedIn}
+             />} />
+        <Route path="/admin/clanovi/:id/rezervacije" element={<PregledRezervacija 
+              
              />} />
       </Routes>
     </BrowserRouter>

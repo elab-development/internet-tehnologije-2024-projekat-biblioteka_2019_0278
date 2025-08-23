@@ -9,6 +9,7 @@ use App\Models\Clan;
 use App\Models\Pozajmica;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\RezervacijaCollection;
 
 class RezervacijaController extends Controller
 {
@@ -18,7 +19,7 @@ class RezervacijaController extends Controller
     public function index()
     {
         $rezervacije = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->get();
-        return response()->json($rezervacije, 200);
+        return new RezervacijaCollection($rezervacije);
     }
 
     public function rezervacijeZaClana(Request $request)
@@ -28,7 +29,15 @@ class RezervacijaController extends Controller
             return response()->json('Clan nije registrovan', 404);
         }
         $rezervacije = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->where('clan_id', $clan_id)->get();
-        return response()->json($rezervacije, 200);
+        return new RezervacijaCollection($rezervacije);
+    }
+    public function prikaziRezervacijeZaClana(Request $request, $clan_id)
+    {
+       
+        
+       $rezervacije = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->where('clan_id', $clan_id)->get();
+                return new RezervacijaCollection($rezervacije);
+
     }
     /**
      * Show the form for creating a new resource.
@@ -53,13 +62,36 @@ class RezervacijaController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Optionally check if the book is available, etc.
-
         $rezervacija = Rezervacija::create([
             'knjiga_id' => $request->knjiga_id,
             'clan_id' => $request->clan_id,
             'datum_rezervacije' => now(),
             'pozajmica_id' => $request->pozajmica_id
+        ]);
+
+        return response()->json($rezervacija, 201);
+    }
+
+    public function kreirajRezervacijuZaUlogovanogClana(Request $request)
+    {
+        $clan_id = Clan::where('user_id', auth()->id())->value('id');
+        if (!$clan_id) {
+            return response()->json('Morate biti ulogovani da biste napravili rezervaciju', 404);
+        }
+        $validator = Validator::make($request->all(), [
+            'knjiga_id' => 'required|exists:knjige,id'
+            
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+
+        $rezervacija = Rezervacija::create([
+            'knjiga_id' => $request->knjiga_id,
+            'clan_id' => $clan_id,
+            'datum_rezervacije' => now()
         ]);
 
         return response()->json($rezervacija, 201);

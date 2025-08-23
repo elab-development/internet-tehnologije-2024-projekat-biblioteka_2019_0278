@@ -4,7 +4,7 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 
-function ClanKartica({ clan, onOpenPozajmice, onOpenKnjige}) {
+function ClanKartica({ clan, onOpenPozajmice, onOpenKnjige, onOpenRezervacije}) {
   const navigate = useNavigate();
 
   const pregledajPozajmice = () => {
@@ -22,6 +22,14 @@ function ClanKartica({ clan, onOpenPozajmice, onOpenKnjige}) {
       return;
     }
     navigate(`/admin/clanovi/${clan.id}/knjige`);
+  };
+  const pregledajRezervacije = () => {
+
+    if (typeof onOpenRezervacije === "function") {
+      onOpenRezervacije(clan.id);
+      return;
+    }
+    navigate(`/admin/clanovi/${clan.id}/rezervacije`);
   };
 
 
@@ -84,6 +92,11 @@ function ClanKartica({ clan, onOpenPozajmice, onOpenKnjige}) {
         <div className="button-container">
           <Button onClick={pregledajKnjige} variant="primary">
             Napravi novu pozajmicu
+          </Button>
+        </div>
+        <div className="button-container">
+          <Button onClick={pregledajRezervacije} variant="primary">
+            Pregledaj rezervacije
           </Button>
         </div>
       </Card.Body>

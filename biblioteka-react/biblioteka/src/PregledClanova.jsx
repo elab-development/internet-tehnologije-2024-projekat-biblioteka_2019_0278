@@ -9,6 +9,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import PregledPozajmicaAdmin from "./PregledPozajmicaAdmin";
 import PregledKnjiga from "./PregledKnjiga";
+import PregledRezervacijaAdmin from "./PregledRezervacijaAdmin";
 
 function PregledClanova() {
   const [clanovi, setClanovi] = useState([]);
@@ -18,6 +19,7 @@ function PregledClanova() {
   const [selectedClanId, setSelectedClanId] = useState(null);
   const [showPozajmiceModal, setshowPozajmiceModal] = useState(false);
   const [showKnjigeModal, setshowKnjigeModal] = useState(false);
+  const [showRezervacijeModal, setshowRezervacijeModal] = useState(false);
 
   const vratiClanove = () => {
     fetch("http://127.0.0.1:8000/api/admin/clanovi", {
@@ -66,6 +68,15 @@ function PregledClanova() {
     setshowKnjigeModal(false);
     setSelectedClanId(null);
   };
+  const openRezervacijeModal = (clanId) => {
+    setSelectedClanId(clanId);
+    setshowRezervacijeModal(true);
+  };
+
+  const closeRezervacijeModal = () => {
+    setshowRezervacijeModal(false);
+    setSelectedClanId(null);
+  };
 
   if (loading) {
     return <Ucitavanje />;
@@ -81,6 +92,7 @@ function PregledClanova() {
                 clan={clan}
                 onOpenPozajmice={openPozajmiceModal}
                 onOpenKnjige={openKnjigeModal}
+                onOpenRezervacije={openRezervacijeModal}
               />
             </Col>
           ))}
@@ -118,6 +130,23 @@ function PregledClanova() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={closeKnjigeModal}>
+            Zatvori
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showRezervacijeModal} onHide={closeRezervacijeModal} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Pregled rezervacija</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ minHeight: "300px" }}>
+          {selectedClanId ? (
+            <PregledRezervacijaAdmin clanId={selectedClanId}  />
+          ) : (
+            <p>Učitavanje...</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeRezervacijeModal}>
             Zatvori
           </Button>
         </Modal.Footer>

@@ -31,6 +31,9 @@ function Navigacija({}) {
               {loggedIn ? (
                 <Nav.Link as={Link} to="/pozajmice">Pozajmice</Nav.Link>
               ) : null}
+              {loggedIn ? (
+                <Nav.Link as={Link} to="/rezervacije">Rezervacije</Nav.Link>
+              ) : null}
               {!loggedIn ? (
                 <Nav.Link as={Link} to="/login">Login</Nav.Link>
               ) : (
