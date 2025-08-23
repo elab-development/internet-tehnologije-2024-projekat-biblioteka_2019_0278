@@ -83,18 +83,14 @@ function ClanKartica({ clan, onOpenPozajmice, onOpenKnjige, onOpenRezervacije}) 
             </tr>
           </tbody>
         </Table>
-
-        <div className="button-container">
+        <br/>
+        <div className="d-flex justify-content-between mt-3">
           <Button onClick={pregledajPozajmice} variant="primary">
             Pregledaj pozajmice
           </Button>
-        </div>
-        <div className="button-container">
           <Button onClick={pregledajKnjige} variant="primary">
             Napravi novu pozajmicu
           </Button>
-        </div>
-        <div className="button-container">
           <Button onClick={pregledajRezervacije} variant="primary">
             Pregledaj rezervacije
           </Button>

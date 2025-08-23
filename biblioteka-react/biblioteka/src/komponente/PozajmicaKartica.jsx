@@ -77,11 +77,14 @@ function PozajmicaKartica({ pozajmica, osveziStranicu }) {
               </tr>
             </tbody>
           </Table>
+          <div className="d-flex justify-content-center mt-3">
+
           {!(adminLoggedIn && !pozajmica.datum_vracanja) ? null : (
             <Button onClick={vratiKnjigu} variant="primary">
               Vrati
             </Button>
           )}
+          </div>
         </Card.Body>
       </Card>
       <ModalPoruka

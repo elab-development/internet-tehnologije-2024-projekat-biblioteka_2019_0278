@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Card from 'react-bootstrap/Card';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { useNavigate } from 'react-router-dom';
 
 const Login = ({ onLogin, loginError }) => {
@@ -62,44 +66,53 @@ const Login = ({ onLogin, loginError }) => {
   };
 
   return (
-    <div>
-      <Form onSubmit={login}>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Email</Form.Label>
-          <Form.Control 
-            type="email" 
-            placeholder="Unesi email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </Form.Group>
+    <Container fluid className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+      <Row className="w-100 justify-content-center">
+        <Col xs={12} sm={8} md={6} lg={4}>
+          <Card className="p-4 shadow">
+            <Card.Body>
+              <Card.Title className="mb-4 text-center">Prijava korisnika</Card.Title>
+              <Form onSubmit={login}>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control 
+                    type="email" 
+                    placeholder="Unesi email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Šifra</Form.Label>
-          <Form.Control 
-            type="password" 
-            placeholder="Šifra"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <Form.Text className="text-muted">
-            {loginError && <span className="text-danger">{loginError}</span>}
-          </Form.Text>
-        </Form.Group>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label>Šifra</Form.Label>
+                  <Form.Control 
+                    type="password" 
+                    placeholder="Šifra"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                  <Form.Text className="text-muted">
+                    {loginError && <span className="text-danger">{loginError}</span>}
+                  </Form.Text>
+                </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Uloguj se
-        </Button>
-      </Form>
+                <Button variant="primary" type="submit" className="w-100">
+                  Uloguj se
+                </Button>
+              </Form>
 
-      <hr />
+              <hr />
 
-      <Button variant="secondary" onClick={redirectToAdmin} style={{ marginTop: '10px' }}>
-        Admin Login
-      </Button>
-    </div>
+              <Button variant="secondary" onClick={redirectToAdmin} className="w-100 mt-2">
+                Admin Login
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

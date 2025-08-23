@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
-import ModalPoruka from "./ModalPoruka"; 
+import ModalPoruka from "./ModalPoruka";
 
 function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
   const token = localStorage.getItem("token");
@@ -14,24 +14,31 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
 
   const kreirajPozajmicu = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/admin/pozajmice", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          id_knjige: knjiga.id,
-          id_clana: clanId,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:8000/api/admin/pozajmice",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            id_knjige: knjiga.id,
+            id_clana: clanId,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const responseBody = await response.json();
         console.error("Response status:", response.status);
         console.error("Response status:", responseBody.message);
 
-        throw new Error(responseBody.message ? responseBody.message: "Greška prilikom izbora knjige.");
+        throw new Error(
+          responseBody.message
+            ? responseBody.message
+            : "Greška prilikom izbora knjige."
+        );
       }
 
       setModalPoruka("Knjiga je uspešno izabrana.");
@@ -47,17 +54,16 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
     }
   };
 
-    const kreirajRezervaciju = async () => {
+  const kreirajRezervaciju = async () => {
     try {
       const response = await fetch("http://localhost:8000/api/rezervacije", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          knjiga_id: knjiga.id
-    
+          knjiga_id: knjiga.id,
         }),
       });
 
@@ -66,7 +72,11 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
         console.error("Response status:", response.status);
         console.error("Response status:", responseBody.message);
 
-        throw new Error(responseBody.message ? responseBody.message: "Greška prilikom rezervacije knjige.");
+        throw new Error(
+          responseBody.message
+            ? responseBody.message
+            : "Greška prilikom rezervacije knjige."
+        );
       }
 
       setModalPoruka("Knjiga je uspešno rezervisana.");
@@ -106,22 +116,26 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
               </tr>
             </tbody>
           </Table>
-
-          {loggedInAdmin && clanId && (
-            <Button variant="primary" onClick={kreirajPozajmicu}>
-              Izaberi
-            </Button>
-          )}
-          {loggedIn && !loggedInAdmin && (
-            <Button variant="primary" onClick={kreirajRezervaciju}>
-              Kreiraj rezervaciju
-            </Button>
-          )}
+          <div className="d-flex justify-content-center mt-3">
+            {loggedInAdmin && clanId && (
+              <Button variant="primary" onClick={kreirajPozajmicu}>
+                Izaberi
+              </Button>
+            )}
+            {loggedIn && !loggedInAdmin && (
+              <Button variant="primary" onClick={kreirajRezervaciju}>
+                Kreiraj rezervaciju
+              </Button>
+            )}
+          </div>
         </Card.Body>
       </Card>
       <ModalPoruka
         show={showModal}
-        onClose={() => {setShowModal(false); osveziStranicu();}}
+        onClose={() => {
+          setShowModal(false);
+          osveziStranicu();
+        }}
         poruka={modalPoruka}
       />
     </>

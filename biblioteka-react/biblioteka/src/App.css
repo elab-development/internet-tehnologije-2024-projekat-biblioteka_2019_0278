@@ -217,3 +217,22 @@ body {
   .card { border-radius: 8px; }
   .modal-dialog { margin: 1rem; }
 }
+
+.pocetna-biblioteka {
+  background-image: url('https://images.pexels.com/photos/1290141/pexels-photo-1290141.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh; /* Visina ekrana */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tekst-na-backgroundu {
+  background-color: rgba(255, 255, 255, 0.8); /* Blago providan tekst box */
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 80%; /* Maksimalna širina */
+  margin: 0 auto;
+}

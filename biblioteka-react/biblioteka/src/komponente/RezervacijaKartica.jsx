@@ -79,11 +79,14 @@ function RezervacijaKartica({ rezervacija, osveziStranicu }) {
               </tr>
             </tbody>
           </Table>
+          <div className="d-flex justify-content-center mt-3">
+
           {adminLoggedIn && !rezervacija.pozajmica_id && (
             <Button onClick={potvrdiRezervaciju} variant="primary">
               Potvrdi rezervaciju
             </Button>
           )}
+          </div>
         </Card.Body>
       </Card>
       <ModalPoruka

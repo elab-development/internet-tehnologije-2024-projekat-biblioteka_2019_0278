@@ -28,6 +28,7 @@ function Navigacija({}) {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link as={Link} to="/">Početna stranica</Nav.Link>
+              <Nav.Link as={Link} to="/knjige">Pregled knjiga</Nav.Link>
               {loggedIn ? (
                 <Nav.Link as={Link} to="/pozajmice">Pozajmice</Nav.Link>
               ) : null}
@@ -53,6 +54,7 @@ function Navigacija({}) {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/admin">Početna stranica</Nav.Link>
+            <Nav.Link as={Link} to="/admin/knjige">Pregled knjiga</Nav.Link>
 
             <Nav.Link as={Link} to="/admin/clanovi">Pregled članova</Nav.Link>
 
