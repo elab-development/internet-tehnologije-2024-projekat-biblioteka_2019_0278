@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             KnjigaSeeder::class,
             ClanSeeder::class,
+            RezervacijaSeeder::class
         ]);
     }
 }

@@ -1,0 +1,164 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use Illuminate\Http\Request;
+use App\Models\Rezervacija;
+use App\Models\Knjiga;
+use App\Models\Clan;
+use App\Models\Pozajmica;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+
+class RezervacijaController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $rezervacije = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->get();
+        return response()->json($rezervacije, 200);
+    }
+
+    public function rezervacijeZaClana(Request $request)
+    {
+        $clan_id = Clan::where('user_id', auth()->id())->value('id');
+        if (!$clan_id) {
+            return response()->json('Clan nije registrovan', 404);
+        }
+        $rezervacije = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->where('clan_id', $clan_id)->get();
+        return response()->json($rezervacije, 200);
+    }
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'knjiga_id' => 'required|exists:knjige,id',
+            'clan_id' => 'required|exists:clanovi,id',
+            'pozajmica_id' => 'nullable|exists:pozajmice,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Optionally check if the book is available, etc.
+
+        $rezervacija = Rezervacija::create([
+            'knjiga_id' => $request->knjiga_id,
+            'clan_id' => $request->clan_id,
+            'datum_rezervacije' => now(),
+            'pozajmica_id' => $request->pozajmica_id
+        ]);
+
+        return response()->json($rezervacija, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        $rezervacija = Rezervacija::find($id);
+        if (!$rezervacija) {
+            return response()->json(['error' => 'Rezervacija nije pronađena.'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'KnjigaId' => 'sometimes|exists:knjige,id',
+            'ClanId' => 'sometimes|exists:clanovi,id',
+            'DatumRezervacije' => 'sometimes|date',
+            'PozajmicaId' => 'nullable|exists:pozajmice,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $rezervacija->update($request->only(['KnjigaId', 'ClanId', 'DatumRezervacije', 'PozajmicaId']));
+
+        return response()->json($rezervacija, 200);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $rezervacija = Rezervacija::find($id);
+        if (!$rezervacija) {
+            return response()->json(['error' => 'Rezervacija nije pronađena.'], 404);
+        }
+
+        $rezervacija->delete();
+
+        return response()->json(['message' => 'Rezervacija uspešno obrisana.'], 200);
+    }
+
+    
+    public function potvrdiRezervaciju(Request $request, $id)
+    {
+        $rezervacija = Rezervacija::find($id);
+        if (!$rezervacija) {
+            return response()->json(['error' => 'Rezervacija nije pronađena.'], 404);
+        }
+
+        if ($rezervacija->pozajmica_id) {
+            return response()->json(['error' => 'Rezervacija je već vezana za pozajmicu.'], 400);
+        }
+
+        $knjiga = Knjiga::find($rezervacija->knjiga_id);
+        if (!$knjiga) {
+            return response()->json(['error' => 'Knjiga nije pronađena.'], 404);
+        }
+        if ($knjiga->kolicina <= 0) {
+            return response()->json(['error' => 'Nema dostupnih primeraka ove knjige.'], 400);
+        }
+
+        $pozajmica = Pozajmica::create([
+            'knjiga_id' => $rezervacija->knjiga_id,
+            'clan_id' => $rezervacija->clan_id,
+            'datum_pozajmice' => now(),
+            'datum_vracanja' => null,
+        ]);
+
+        $knjiga->kolicina -= 1;
+        $knjiga->save();
+
+        $rezervacija->pozajmica_id = $pozajmica->id;
+        $rezervacija->save();
+
+        return response()->json([
+            'message' => 'Rezervacija je uspešno konvertovana u pozajmicu.',
+            'rezervacija' => $rezervacija,
+            'pozajmica' => $pozajmica
+        ], 201);
+    }
+}
