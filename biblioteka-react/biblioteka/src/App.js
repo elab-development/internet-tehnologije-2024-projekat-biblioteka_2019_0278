@@ -12,32 +12,9 @@ import PregledPozajmicaAdmin from "./PregledPozajmicaAdmin";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [token, setToken] = useState("");
   const [loginError, setLoginError] = useState("");
-  const [knjige, setKnjige] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  const vratiKnjige = () => {
-    fetch("http://127.0.0.1:8000/api/knjige")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((knjigeJson) => {
-        console.log(knjigeJson.data);
-        setKnjige(knjigeJson.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-  };
 
-  useEffect(() => {
-    vratiKnjige();
-  }, []);
 
   const handleLogin = (token) => {
     if (!token) {
@@ -46,7 +23,6 @@ function App() {
       return;
     }
     setLoggedIn(true);
-    setToken(token);
     localStorage.setItem("token", token);
     setLoginError("");
   };
@@ -59,10 +35,7 @@ function App() {
           path="/"
           element={
             <PregledKnjiga
-              osveziStranicu={vratiKnjige}
-              knjige={knjige}
               loggedIn={loggedIn}
-              loading={loading}
             />
           }
         />
@@ -81,15 +54,15 @@ function App() {
           path="/admin/"
           element={
             <PregledKnjiga
-              osveziStranicu={vratiKnjige}
-              knjige={knjige}
               loggedIn={loggedIn}
-              loading={loading}
             />
           }
         />
         <Route path="/admin/clanovi/" element={<PregledClanova  />}/>
         <Route path="/admin/clanovi/:id/pozajmice" element={<PregledPozajmicaAdmin/>} />
+        <Route path="/admin/clanovi/:id/knjige" element={<PregledKnjiga 
+              loggedIn={loggedIn}
+             />} />
       </Routes>
     </BrowserRouter>
   );

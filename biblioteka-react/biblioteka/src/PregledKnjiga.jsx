@@ -8,8 +8,9 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import Pagination from "react-bootstrap/Pagination";
+import { useParams } from "react-router";
 
-function PregledKnjiga({ osveziStranicu, loading }) {
+function PregledKnjiga({ osveziStranicu, loading, clanId }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredKnjige, setFilteredKnjige] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -18,6 +19,11 @@ function PregledKnjiga({ osveziStranicu, loading }) {
   const [lastPage, setLastPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [metaLinks, setMetaLinks] = useState([]);
+
+
+  const params = useParams();
+  const id = clanId || params.id;
+
 
   const vratiKnjige = async (page = 1, query = "") => {
     setSearchLoading(true);
@@ -150,7 +156,8 @@ function PregledKnjiga({ osveziStranicu, loading }) {
                       <Col key={knjiga.id}>
                         <KnjigaKartica
                           knjiga={knjiga}
-                          osveziStranicu={osveziStranicu}
+                          osveziStranicu={vratiKnjige}
+                          clanId={id}
                         />
                       </Col>
                     ))

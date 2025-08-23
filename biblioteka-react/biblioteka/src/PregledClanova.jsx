@@ -8,6 +8,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import PregledPozajmicaAdmin from "./PregledPozajmicaAdmin";
+import PregledKnjiga from "./PregledKnjiga";
 
 function PregledClanova() {
   const [clanovi, setClanovi] = useState([]);
@@ -15,7 +16,8 @@ function PregledClanova() {
   const token = localStorage.getItem("adminToken");
 
   const [selectedClanId, setSelectedClanId] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [showPozajmiceModal, setshowPozajmiceModal] = useState(false);
+  const [showKnjigeModal, setshowKnjigeModal] = useState(false);
 
   const vratiClanove = () => {
     fetch("http://127.0.0.1:8000/api/admin/clanovi", {
@@ -48,11 +50,20 @@ function PregledClanova() {
 
   const openPozajmiceModal = (clanId) => {
     setSelectedClanId(clanId);
-    setShowModal(true);
+    setshowPozajmiceModal(true);
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setshowPozajmiceModal(false);
+    setSelectedClanId(null);
+  };
+  const openKnjigeModal = (clanId) => {
+    setSelectedClanId(clanId);
+    setshowKnjigeModal(true);
+  };
+
+  const closeKnjigeModal = () => {
+    setshowKnjigeModal(false);
     setSelectedClanId(null);
   };
 
@@ -69,13 +80,14 @@ function PregledClanova() {
               <ClanKartica
                 clan={clan}
                 onOpenPozajmice={openPozajmiceModal}
+                onOpenKnjige={openKnjigeModal}
               />
             </Col>
           ))}
         </Row>
       </Container>
 
-      <Modal show={showModal} onHide={closeModal} size="lg" centered>
+      <Modal show={showPozajmiceModal} onHide={closeModal} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>Pozajmice člana</Modal.Title>
         </Modal.Header>
@@ -88,6 +100,24 @@ function PregledClanova() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={closeModal}>
+            Zatvori
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      
+      <Modal show={showKnjigeModal} onHide={closeKnjigeModal} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Napravi novu pozajmicu</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ minHeight: "300px" }}>
+          {selectedClanId ? (
+            <PregledKnjiga clanId={selectedClanId}  />
+          ) : (
+            <p>Učitavanje...</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeKnjigeModal}>
             Zatvori
           </Button>
         </Modal.Footer>
