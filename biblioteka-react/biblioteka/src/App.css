@@ -23,7 +23,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.45;
   -webkit-tap-highlight-color: transparent;
-  background-image: url('https://images.pexels.com/photos/1290141/pexels-photo-1290141.jpeg');
+  background-image: url('./pozadina.jpeg');
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
