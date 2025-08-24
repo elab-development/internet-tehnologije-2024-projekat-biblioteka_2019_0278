@@ -92,7 +92,18 @@ class KnjigaController extends Controller
      */
     public function update(Request $request, Knjiga $knjiga)
     {
-        //
+        $validatedData = $request->validate([
+            'naslov' => 'sometimes|required|string|max:255',
+            'pisac' => 'sometimes|required|string|max:255',
+            'kolicina' => 'sometimes|required|integer|min:0',
+        ]);
+
+     
+        $knjiga->update($validatedData);
+        return response()->json([
+            'message' => 'Knjiga je uspešno ažurirana.',
+            'knjiga' => $knjiga
+        ], 200);
     }
 
     /**

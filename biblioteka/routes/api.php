@@ -21,6 +21,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::post('/admin/knjige', [KnjigaController::class, 'store'])->middleware('auth:admin-api');
+Route::patch('/admin/knjige/{knjiga}', [KnjigaController::class, 'update'])->middleware('auth:admin-api');
 Route::resource('/admin/clanovi', ClanController::class)->middleware('auth:admin-api');
 Route::post('/admin/pozajmice', [PozajmicaController::class, 'storeAdmin'])->middleware('auth:admin-api');
 Route::get('/admin/pozajmice', [PozajmicaController::class, 'indexAdmin'])->middleware('auth:admin-api');

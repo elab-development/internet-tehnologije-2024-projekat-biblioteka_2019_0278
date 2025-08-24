@@ -148,6 +148,12 @@ class RezervacijaController extends Controller
         if (!$rezervacija) {
             return response()->json(['error' => 'Rezervacija nije pronađena.'], 404);
         }
+         
+        if ($rezervacija->pozajmica_id) {
+            return response()->json([
+                'error' => 'Nije moguće obrisati rezervaciju koja je već potvrđena.'
+            ], 409);
+        }
 
         $rezervacija->delete();
 
