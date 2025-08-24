@@ -11,16 +11,17 @@ import PregledPozajmicaAdmin from "./PregledPozajmicaAdmin";
 import PregledKnjiga from "./PregledKnjiga";
 import PregledRezervacijaAdmin from "./PregledRezervacijaAdmin";
 import ModalPregled from "./komponente/ModalPregled";
+import useToggle from "./hooks/useToggle";
 
 function PregledClanova() {
   const [clanovi, setClanovi] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("adminToken");
-
   const [selectedClanId, setSelectedClanId] = useState(null);
-  const [showPozajmiceModal, setshowPozajmiceModal] = useState(false);
-  const [showKnjigeModal, setshowKnjigeModal] = useState(false);
-  const [showRezervacijeModal, setshowRezervacijeModal] = useState(false);
+
+  const pozajmiceModal = useToggle();
+  const knjigeModal = useToggle();
+  const rezervacijeModal = useToggle();
 
   const vratiClanove = () => {
     fetch("http://127.0.0.1:8000/api/admin/clanovi", {
@@ -53,29 +54,31 @@ function PregledClanova() {
 
   const openPozajmiceModal = (clanId) => {
     setSelectedClanId(clanId);
-    setshowPozajmiceModal(true);
+    pozajmiceModal.setTrue();
   };
 
   const closeModal = () => {
-    setshowPozajmiceModal(false);
+    pozajmiceModal.setFalse();
     setSelectedClanId(null);
   };
+
   const openKnjigeModal = (clanId) => {
     setSelectedClanId(clanId);
-    setshowKnjigeModal(true);
+    knjigeModal.setTrue();
   };
 
   const closeKnjigeModal = () => {
-    setshowKnjigeModal(false);
+    knjigeModal.setFalse();
     setSelectedClanId(null);
   };
+
   const openRezervacijeModal = (clanId) => {
     setSelectedClanId(clanId);
-    setshowRezervacijeModal(true);
+    rezervacijeModal.setTrue();
   };
 
   const closeRezervacijeModal = () => {
-    setshowRezervacijeModal(false);
+    rezervacijeModal.setFalse();
     setSelectedClanId(null);
   };
 
@@ -101,11 +104,10 @@ function PregledClanova() {
       </Container>
 
       <ModalPregled
-        show={showPozajmiceModal}
+        show={pozajmiceModal.value}
         onHide={closeModal}
         title={"Pozajmice člana"}
       >
-        {" "}
         {selectedClanId ? (
           <PregledPozajmicaAdmin clanId={selectedClanId} />
         ) : (
@@ -114,7 +116,7 @@ function PregledClanova() {
       </ModalPregled>
 
       <ModalPregled
-        show={showKnjigeModal}
+        show={knjigeModal.value}
         onHide={closeKnjigeModal}
         title={"Napravi novu pozajmicu"}
       >
@@ -126,7 +128,7 @@ function PregledClanova() {
       </ModalPregled>
 
       <ModalPregled
-        show={showRezervacijeModal}
+        show={rezervacijeModal.value}
         onHide={closeRezervacijeModal}
         title={"Pregled rezervacija"}
       >

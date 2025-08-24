@@ -171,7 +171,7 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
                 Kreiraj rezervaciju
               </Button>
             )}
-            {loggedInAdmin && (
+            {loggedInAdmin && !clanId && (
               <Button variant="secondary" onClick={handleShowUpdateModal}>
                 Ažuriraj podatke
               </Button>
