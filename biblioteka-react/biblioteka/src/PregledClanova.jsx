@@ -10,6 +10,7 @@ import Col from "react-bootstrap/Col";
 import PregledPozajmicaAdmin from "./PregledPozajmicaAdmin";
 import PregledKnjiga from "./PregledKnjiga";
 import PregledRezervacijaAdmin from "./PregledRezervacijaAdmin";
+import ModalPregled from "./komponente/ModalPregled";
 
 function PregledClanova() {
   const [clanovi, setClanovi] = useState([]);
@@ -84,7 +85,7 @@ function PregledClanova() {
 
   return clanovi.length > 0 ? (
     <>
-      <Container>
+      <Container className="container-custom">
         <Row xs={1}>
           {clanovi.map((clan) => (
             <Col key={clan.id}>
@@ -99,58 +100,42 @@ function PregledClanova() {
         </Row>
       </Container>
 
-      <Modal show={showPozajmiceModal} onHide={closeModal} size="lg" centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Pozajmice člana</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ minHeight: "300px" }}>
-          {selectedClanId ? (
-            <PregledPozajmicaAdmin clanId={selectedClanId}  />
-          ) : (
-            <p>Učitavanje...</p>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeModal}>
-            Zatvori
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      
-      <Modal show={showKnjigeModal} onHide={closeKnjigeModal} size="lg" centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Napravi novu pozajmicu</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ minHeight: "300px" }}>
-          {selectedClanId ? (
-            <PregledKnjiga clanId={selectedClanId}  />
-          ) : (
-            <p>Učitavanje...</p>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeKnjigeModal}>
-            Zatvori
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <Modal show={showRezervacijeModal} onHide={closeRezervacijeModal} size="lg" centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Pregled rezervacija</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ minHeight: "300px" }}>
-          {selectedClanId ? (
-            <PregledRezervacijaAdmin clanId={selectedClanId}  />
-          ) : (
-            <p>Učitavanje...</p>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeRezervacijeModal}>
-            Zatvori
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ModalPregled
+        show={showPozajmiceModal}
+        onHide={closeModal}
+        title={"Pozajmice člana"}
+      >
+        {" "}
+        {selectedClanId ? (
+          <PregledPozajmicaAdmin clanId={selectedClanId} />
+        ) : (
+          <p>Učitavanje...</p>
+        )}
+      </ModalPregled>
+
+      <ModalPregled
+        show={showKnjigeModal}
+        onHide={closeKnjigeModal}
+        title={"Napravi novu pozajmicu"}
+      >
+        {selectedClanId ? (
+          <PregledKnjiga clanId={selectedClanId} />
+        ) : (
+          <p>Učitavanje...</p>
+        )}
+      </ModalPregled>
+
+      <ModalPregled
+        show={showRezervacijeModal}
+        onHide={closeRezervacijeModal}
+        title={"Pregled rezervacija"}
+      >
+        {selectedClanId ? (
+          <PregledRezervacijaAdmin clanId={selectedClanId} />
+        ) : (
+          <p>Učitavanje...</p>
+        )}
+      </ModalPregled>
     </>
   ) : (
     <p>Nema članova za prikaz.</p>

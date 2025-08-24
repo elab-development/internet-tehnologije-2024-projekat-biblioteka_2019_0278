@@ -41,7 +41,7 @@ function PregledRezervacija({}) {
     return <Ucitavanje />;
   }
   return rezervacije.length > 0 ? (
-    <Container>
+    <Container className="container-custom">
       <Row xs={1} md={1}>
         {rezervacije
           .map((rezervacija) => (

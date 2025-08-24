@@ -54,7 +54,7 @@ function PregledRezervacija({clanId}) {
     return <Ucitavanje />;
   }
   return rezervacije.length > 0 ? (
-    <Container>
+    <Container className="container-custom">
       <Row xs={1} md={1}>
         {rezervacije.map((rezervacija) => (
           <Col key={rezervacija.id}>

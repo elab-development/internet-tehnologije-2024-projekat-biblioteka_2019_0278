@@ -126,7 +126,7 @@ function PregledKnjiga({ osveziStranicu, loading, clanId }) {
   } else {
     return (
       <div>
-        <Container>
+        <Container className="container-custom">
           <Form className="mb-4">
             <InputGroup>
               <Form.Control

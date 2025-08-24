@@ -54,7 +54,7 @@ function PregledPozajmicaAdmin({ clanId }) {
     return <Ucitavanje />;
   }
   return pozajmice.length > 0 ? (
-    <Container>
+    <Container className="container-custom">
       <Row xs={1} md={1}>
         {pozajmice
           .sort((a, b) => {
