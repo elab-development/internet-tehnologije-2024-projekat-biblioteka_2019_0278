@@ -16,6 +16,7 @@ Route::post('/vratiKnjigu/{id}', [PozajmicaController::class, 'vratiKnjigu'])->m
 Route::resource('/pozajmice', PozajmicaController::class)->middleware('auth:sanctum');
 Route::post('/rezervacije', [RezervacijaController::class, 'kreirajRezervacijuZaUlogovanogClana'])->middleware('auth:sanctum');
 Route::get('/rezervacije', [RezervacijaController::class, 'rezervacijeZaClana'])->middleware('auth:sanctum');
+Route::delete('/rezervacije/{id}', [RezervacijaController::class, 'destroy'])->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');

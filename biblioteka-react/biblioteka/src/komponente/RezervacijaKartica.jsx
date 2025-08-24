@@ -5,8 +5,9 @@ import Table from "react-bootstrap/Table";
 import ModalPoruka from "./ModalPoruka";
 
 function RezervacijaKartica({ rezervacija, osveziStranicu }) {
-  const token = localStorage.getItem("adminToken");
-  const adminLoggedIn = token !== null;
+  const adminToken = localStorage.getItem("adminToken");
+  const token = localStorage.getItem("token");
+  const adminLoggedIn = adminToken !== null;
 
   const [showModal, setShowModal] = useState(false);
   const [modalPoruka, setModalPoruka] = useState("");
@@ -19,7 +20,7 @@ function RezervacijaKartica({ rezervacija, osveziStranicu }) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${adminToken}`,
           },
           body: JSON.stringify({}),
         }
@@ -27,7 +28,9 @@ function RezervacijaKartica({ rezervacija, osveziStranicu }) {
       const data = await response.json();
 
       if (!response.ok) {
-        setModalPoruka(data.error || "Došlo je do greške prilikom potvrde rezervacije.");
+        setModalPoruka(
+          data.error || "Došlo je do greške prilikom potvrde rezervacije."
+        );
         setShowModal(true);
         return;
       }
@@ -44,15 +47,16 @@ function RezervacijaKartica({ rezervacija, osveziStranicu }) {
     }
   };
 
-   const izbrisiRezervaciju = async () => {
+  const izbrisiRezervaciju = async () => {
     try {
+      const url = adminLoggedIn ? `http://localhost:8000/api/admin/rezervacije/${rezervacija.id}` : `http://localhost:8000/api/rezervacije/${rezervacija.id}`;
       const response = await fetch(
-        `http://localhost:8000/api/admin/rezervacije/${rezervacija.id}`,
+        url,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${adminLoggedIn?adminToken:token}`,
           },
         }
       );
@@ -73,7 +77,6 @@ function RezervacijaKartica({ rezervacija, osveziStranicu }) {
       console.error("Error:", error);
     }
   };
-
 
   return (
     <>
@@ -110,21 +113,27 @@ function RezervacijaKartica({ rezervacija, osveziStranicu }) {
             </tbody>
           </Table>
           <div className="d-flex justify-content-center mt-3">
-
-          {adminLoggedIn  && (
-            <Button onClick={potvrdiRezervaciju} variant="success" disabled={rezervacija.pozajmica_id}>
-              Potvrdi rezervaciju
+            {adminLoggedIn && (
+              <Button
+                onClick={potvrdiRezervaciju}
+                variant="success"
+                disabled={rezervacija.pozajmica_id}
+              >
+                Potvrdi rezervaciju
+              </Button>
+            )}
+            <Button onClick={izbrisiRezervaciju} variant="danger">
+              Obriši rezervaciju
             </Button>
-          )}
-           <Button onClick={izbrisiRezervaciju} variant="danger">
-                  Obriši rezervaciju
-                </Button>
           </div>
         </Card.Body>
       </Card>
       <ModalPoruka
         show={showModal}
-        onClose={() => {setShowModal(false); osveziStranicu()}}
+        onClose={() => {
+          setShowModal(false);
+          osveziStranicu();
+        }}
         poruka={modalPoruka}
       />
     </>
