@@ -9,26 +9,32 @@ use App\Http\Controllers\API\ClanController;
 use App\Http\Controllers\API\RezervacijaController;
 
 Route::get('/knjige', [KnjigaController::class, 'index']);
-Route::get('/knjige/{id}', [KnjigaController::class, 'show'])->middleware('auth:sanctum');
+Route::get('/knjige/{id}', [KnjigaController::class, 'show']);
 
 
 Route::get('/pozajmice', [PozajmicaController::class, 'index'])->middleware('auth:sanctum');
 Route::post('/rezervacije', [RezervacijaController::class, 'kreirajRezervacijuZaUlogovanogClana'])->middleware('auth:sanctum');
 Route::get('/rezervacije', [RezervacijaController::class, 'rezervacijeZaClana'])->middleware('auth:sanctum');
-Route::delete('/rezervacije/{id}', [RezervacijaController::class, 'destroy'])->middleware('auth:sanctum');
+Route::delete('/rezervacije/{id}', [RezervacijaController::class, 'destroyZaClana'])->middleware('auth:sanctum');
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::post('/admin/knjige', [KnjigaController::class, 'store'])->middleware('auth:admin-api');
-Route::patch('/admin/knjige/{knjiga}', [KnjigaController::class, 'update'])->middleware('auth:admin-api');
-Route::resource('/admin/clanovi', ClanController::class)->middleware('auth:admin-api');
-Route::post('/admin/vratiKnjigu/{id}', [PozajmicaController::class, 'vratiKnjigu'])->middleware('auth:admin-api');
-Route::get('/admin/pozajmice', [PozajmicaController::class, 'indexAdmin'])->middleware('auth:admin-api');
-Route::resource('/admin/pozajmice', PozajmicaController::class)->only(['store', 'show', 'destroy' ])->middleware('auth:admin-api');
-Route::get('/admin/clanovi/{clan_id}/pozajmice', [PozajmicaController::class, 'prikaziPozajmiceZaClana'])->middleware('auth:admin-api');
-Route::get('/admin/clanovi/{clan_id}/rezervacije', [RezervacijaController::class, 'prikaziRezervacijeZaClana'])->middleware('auth:admin-api');
-Route::post('/admin/logout', [AuthController::class, 'logout'])->middleware('auth:admin-api');
-Route::post('/admin/login', [AuthController::class, 'loginAdmin']);
-Route::resource('/admin/rezervacije', RezervacijaController::class)->middleware('auth:admin-api');
-Route::post('/admin/potvrdiRezervaciju/{id}', [RezervacijaController::class, 'potvrdiRezervaciju'])->middleware('auth:admin-api');
+Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
+    Route::post('/knjige', [KnjigaController::class, 'store']);
+    Route::patch('/knjige/{knjiga}', [KnjigaController::class, 'update']);
+    
+    Route::resource('/clanovi', ClanController::class);
+    
+    Route::post('/vratiKnjigu/{id}', [PozajmicaController::class, 'vratiKnjigu']);
+    Route::get('/pozajmice', [PozajmicaController::class, 'indexAdmin']);
+    Route::resource('/pozajmice', PozajmicaController::class)->only(['store', 'show', 'destroy']);
+    Route::get('/clanovi/{clan_id}/pozajmice', [PozajmicaController::class, 'prikaziPozajmiceZaClana']);
+    Route::get('/clanovi/{clan_id}/rezervacije', [RezervacijaController::class, 'prikaziRezervacijeZaClana']);
+    Route::resource('/rezervacije', RezervacijaController::class);
+    Route::post('/potvrdiRezervaciju/{id}', [RezervacijaController::class, 'potvrdiRezervaciju']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/login', [AuthController::class, 'loginAdmin']);
+});

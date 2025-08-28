@@ -10,6 +10,7 @@ use App\Models\Pozajmica;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\RezervacijaCollection;
+use App\Http\Resources\RezervacijaResource;
 
 class RezervacijaController extends Controller
 {
@@ -33,10 +34,10 @@ class RezervacijaController extends Controller
     }
     public function prikaziRezervacijeZaClana(Request $request, $clan_id)
     {
-       
-        
-       $rezervacije = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->where('clan_id', $clan_id)->get();
-                return new RezervacijaCollection($rezervacije);
+
+
+        $rezervacije = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->where('clan_id', $clan_id)->get();
+        return new RezervacijaCollection($rezervacije);
 
     }
     /**
@@ -62,6 +63,10 @@ class RezervacijaController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        if (Rezervacija::where('clan_id', $request->clan_id)->where('knjiga_id', $request->knjiga_id)->whereNull('pozajmica_id')->exists()) {
+            return response()->json(['error' => 'Već postoji rezervacija za ovu knjigu koja nije potvrđena.'], 409);
+        }
+
         $rezervacija = Rezervacija::create([
             'knjiga_id' => $request->knjiga_id,
             'clan_id' => $request->clan_id,
@@ -69,7 +74,7 @@ class RezervacijaController extends Controller
             'pozajmica_id' => $request->pozajmica_id
         ]);
 
-        return response()->json($rezervacija, 201);
+        return response()->json(new RezervacijaResource($rezervacija), 201);
     }
 
     public function kreirajRezervacijuZaUlogovanogClana(Request $request)
@@ -78,23 +83,29 @@ class RezervacijaController extends Controller
         if (!$clan_id) {
             return response()->json('Morate biti ulogovani da biste napravili rezervaciju', 404);
         }
+
+
+
+
         $validator = Validator::make($request->all(), [
             'knjiga_id' => 'required|exists:knjige,id'
-            
+
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-
+        if (Rezervacija::where('clan_id', $clan_id)->where('knjiga_id', $request->knjiga_id)->whereNull('pozajmica_id')->exists()) {
+            return response()->json(['error' => 'Već postoji rezervacija za ovu knjigu koja nije potvrđena.'], 409);
+        }
         $rezervacija = Rezervacija::create([
             'knjiga_id' => $request->knjiga_id,
             'clan_id' => $clan_id,
             'datum_rezervacije' => now()
         ]);
 
-        return response()->json($rezervacija, 201);
+        return response()->json(new RezervacijaResource($rezervacija), 201);
     }
 
     /**
@@ -102,7 +113,11 @@ class RezervacijaController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $rezervacija = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->find($id);
+        if (!$rezervacija) {
+            return response()->json(['error' => 'Rezervacija nije pronađena.'], 404);
+        }
+        return new RezervacijaResource($rezervacija);
     }
 
     /**
@@ -124,19 +139,19 @@ class RezervacijaController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'KnjigaId' => 'sometimes|exists:knjige,id',
-            'ClanId' => 'sometimes|exists:clanovi,id',
-            'DatumRezervacije' => 'sometimes|date',
-            'PozajmicaId' => 'nullable|exists:pozajmice,id'
+            'knjiga_id' => 'sometimes|exists:knjige,id',
+            'clan_id' => 'sometimes|exists:clanovi,id',
+            'datum_rezervacije' => 'sometimes|date',
+            'pozajmica_id' => 'nullable|exists:pozajmice,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $rezervacija->update($request->only(['KnjigaId', 'ClanId', 'DatumRezervacije', 'PozajmicaId']));
+        $rezervacija->update($request->only(['knjiga_id', 'clan_id', 'datum_rezervacije', 'pozajmica_id']));
 
-        return response()->json($rezervacija, 200);
+        return response()->json(new RezervacijaResource($rezervacija), 200);
     }
 
     /**
@@ -148,7 +163,7 @@ class RezervacijaController extends Controller
         if (!$rezervacija) {
             return response()->json(['error' => 'Rezervacija nije pronađena.'], 404);
         }
-         
+
         if ($rezervacija->pozajmica_id) {
             return response()->json([
                 'error' => 'Nije moguće obrisati rezervaciju koja je već potvrđena.'
@@ -160,7 +175,29 @@ class RezervacijaController extends Controller
         return response()->json(['message' => 'Rezervacija uspešno obrisana.'], 200);
     }
 
-    
+    public function destroyZaClana(string $id)
+    {
+        $rezervacija = Rezervacija::find($id);
+        if (!$rezervacija) {
+            return response()->json(['error' => 'Rezervacija nije pronađena.'], 404);
+        }
+
+        $clan_id = Clan::where('user_id', auth()->id())->value('id');
+        if (!$clan_id || $rezervacija->clan_id != $clan_id) {
+            return response()->json(['error' => 'Nemate dozvolu da obrišete ovu rezervaciju.'], 403);
+        }
+
+        if ($rezervacija->pozajmica_id) {
+            return response()->json([
+                'error' => 'Nije moguće obrisati rezervaciju koja je već potvrđena.'
+            ], 409);
+        }
+
+        $rezervacija->delete();
+
+        return response()->json(['message' => 'Rezervacija uspešno obrisana.'], 200);
+    }
+
     public function potvrdiRezervaciju(Request $request, $id)
     {
         $rezervacija = Rezervacija::find($id);
