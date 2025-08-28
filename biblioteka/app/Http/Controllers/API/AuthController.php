@@ -34,48 +34,47 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()
-		->json(['data' => $user, 'access_token' => $token, 					 'token_type' => 'Bearer',]);
+            ->json(['data' => $user, 'access_token' => $token, 'token_type' => 'Bearer',]);
     }
 
 
-    public function createToken(string $name, array $abilities=['*'])
-{
-	$token=$this->tokens()->create([
-		'name' => $name,
-		'token' => hash('sha256', $plainTextToken=Str::random(40)),
-		'abilities' => $abilities,
-	]);
-	return  new NewAccessToken($token, $token-> getKey().'|'.$plainTextoken);
-}
-
-public function login(Request $request)
+    public function createToken(string $name, array $abilities = ['*'])
     {
-        if (!Auth::attempt($request->only('email', 'password'))) 
-	  {
+        $token = $this->tokens()->create([
+            'name' => $name,
+            'token' => hash('sha256', $plainTextToken = Str::random(40)),
+            'abilities' => $abilities,
+        ]);
+        return new NewAccessToken($token, $token->getKey() . '|' . $plainTextoken);
+    }
+
+    public function login(Request $request)
+    {
+        if (!Auth::attempt($request->only('email', 'password'))) {
             return response()
                 ->json(['message' => 'Unauthorized'], 401);
         }
 
-        $user = User::where('email', $request['email'])-> 								 firstOrFail();
+        $user = User::where('email', $request['email'])->firstOrFail();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()
-            ->json(['message' => 'Hi ' . $user->name . ', welcome to 				home', 'access_token' => $token, 'token_type' => 					'Bearer',]);
+            ->json(['message' => 'Hi ' . $user->name . ', welcome to 				home', 'access_token' => $token, 'token_type' => 'Bearer',]);
     }
 
     public function logout(Request $request)
-{
-    $request->user()->currentAccessToken()->delete();
-
-    return response()->json([
-        'message' => 'Successfully logged out'
-    ]);
-}
-
-public function loginAdmin(Request $request)
     {
-        if (!Auth::guard('admin')->attempt($request->only('email',   'password'))) {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ]);
+    }
+
+    public function loginAdmin(Request $request)
+    {
+        if (!Auth::guard('admin')->attempt($request->only('email', 'password'))) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 

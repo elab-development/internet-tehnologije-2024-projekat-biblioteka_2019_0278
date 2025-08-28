@@ -14,21 +14,7 @@ class PozajmicaCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-           return $this->collection->map(function ($pozajmica) {
-            return [
-                'id' => $pozajmica->id,
-                'knjiga_id' => $pozajmica->knjiga_id,
-                'clan_id' => $pozajmica->clan_id,
-                'datum_pozajmice' => $pozajmica->datum_pozajmice,
-                'datum_vracanja' => $pozajmica->datum_vracanja,
-                'created_at' => $pozajmica->created_at,
-                'updated_at' => $pozajmica->updated_at,             
-                'knjiga' => $pozajmica->knjiga ? [
-                    'id' => $pozajmica->knjiga->id,
-                    'naslov' => $pozajmica->knjiga->naslov,
-                    'pisac' => $pozajmica->knjiga->pisac,
-                ] : null,
-            ];
-        })->toArray();
+        return $this->collection->map(function ($pozajmica) {
+            return new PozajmicaResource($pozajmica); })->toArray();
     }
 }

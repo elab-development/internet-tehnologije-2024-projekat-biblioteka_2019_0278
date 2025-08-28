@@ -14,6 +14,11 @@ class KnjigaResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'naslov' => $this->naslov,
+            'pisac' => $this->pisac,
+            'kolicina' => $this->kolicina
+        ];
     }
 }
