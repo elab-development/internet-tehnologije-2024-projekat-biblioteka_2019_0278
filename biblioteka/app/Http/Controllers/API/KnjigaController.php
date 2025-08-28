@@ -6,6 +6,7 @@ use App\Models\Knjiga;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KnjigaCollection;;
+use App\Http\Resources\KnjigaResource;
 
 
 class KnjigaController extends Controller
@@ -37,14 +38,8 @@ class KnjigaController extends Controller
      */
     public function create()
     {
-         $book = Book::create([
-            'id'=>$request->id,
-            'naslov'=>$request->naslov,
-            'pisac'=>$request->pisac,
-            'kolicina'=>$request->kolicina
-        ]);
-        
-
+        //
+    
     }
 
     /**
@@ -72,9 +67,9 @@ class KnjigaController extends Controller
      */
     public function show(Knjiga $knjiga)
     {
-        $knjiga = Knjiga::find($id);
+        
         if(is_null($knjiga)) {
-            return response()->json('Data not found', 404);
+            return response()->json('Tražena knjiga nije pronađena', 404);
         }
         return new KnjigaResource($knjiga);
     }
