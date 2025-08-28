@@ -22,4 +22,9 @@ class Pozajmica extends Model
     {
         return $this->belongsTo(Knjiga::class, 'knjiga_id');
     }
+
+    public function clan()
+    {
+        return $this->belongsTo(Clan::class, 'clan_id');
+    }
 }

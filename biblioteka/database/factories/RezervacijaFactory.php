@@ -22,7 +22,7 @@ class RezervacijaFactory extends Factory
             'knjiga_id' => Knjiga::inRandomOrder()->first()?->id ?? Knjiga::factory()->create()->id,
             'clan_id' => Clan::inRandomOrder()->first()?->id ?? Clan::factory()->create()->id,
             'datum_rezervacije' => $this->faker->date(),
-            'pozajmica_id' => null, // By default, not tied to a Pozajmica
+            'pozajmica_id' => null,
         ];
     }
 }

@@ -36,5 +36,6 @@ Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::post('/potvrdiRezervaciju/{id}', [RezervacijaController::class, 'potvrdiRezervaciju']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/login', [AuthController::class, 'loginAdmin']);
+   
 });
+ Route::post('admin/login', [AuthController::class, 'loginAdmin']);
