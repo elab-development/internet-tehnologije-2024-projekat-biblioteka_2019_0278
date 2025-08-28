@@ -34,7 +34,7 @@ class ClanController extends Controller
     {
         $validated = $request->validate([
             'ime_prezime' => 'required|string|max:255',
-            'email' => 'required|email|unique:clans,email',
+            'email' => 'required|email|unique:clanovi,email',
             'user_id' => 'required|exists:users,id',
         ]);
 
