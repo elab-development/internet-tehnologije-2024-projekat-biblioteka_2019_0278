@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\PozajmicaResource;
 use App\Models\Pozajmica;
 use App\Models\Clan;
 use App\Models\Knjiga;
@@ -20,25 +21,26 @@ class PozajmicaController extends Controller
     {
         $clan_id = Clan::where('user_id', auth()->id())->value('id');
         if (!$clan_id) {
-            return response()->json('Clan nije registrovan', 404);
+            return response()->json('Morate biti registrovani član da biste pristupili pozajmicama.', 404);
         }
-        $pozajmice = Pozajmica::with('knjiga')->where('clan_id',$clan_id)->get();
+        $pozajmice = Pozajmica::with('knjiga')->where('clan_id', $clan_id)->get();
         return new PozajmicaCollection($pozajmice);
     }
     public function indexAdmin()
     {
-       
+
         $pozajmice = Pozajmica::all();
         if ($pozajmice->isEmpty()) {
-            return response()->json('Nema pozajmica', 404);
+            return response()->json('Nema pozajmica.', 404);
         }
-        return response()->json($pozajmice);
+        return new PozajmicaCollection($pozajmice);
+
     }
     public function prikaziPozajmiceZaClana(Request $request, $clan_id)
     {
-       
-        
-       $pozajmice = Pozajmica::with('knjiga')->where('clan_id',$clan_id)->get();
+
+
+        $pozajmice = Pozajmica::with('knjiga')->where('clan_id', $clan_id)->get();
         return new PozajmicaCollection($pozajmice);
     }
 
@@ -67,8 +69,8 @@ class PozajmicaController extends Controller
             ], 422);
         }
 
-     
-         $clan_id = Clan::where('user_id', auth()->id())->value('id');
+
+        $clan_id = Clan::where('user_id', auth()->id())->value('id');
         if (!$clan_id) {
             return response()->json('Morate biti registrovani clan da biste pozajmili knjigu', 404);
         }
@@ -88,58 +90,18 @@ class PozajmicaController extends Controller
             'datum_vracanja' => $request->return_date ? $request->return_date : null,
         ]);
 
-        $knjiga->kolicina -= 1;
-        $knjiga->save();
+        $knjiga->decrement('kolicina');
 
-        return response()->json($pozajmica, 201);
+        return response()->json(new PozajmicaResource($pozajmica), 201);
     }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function storeAdmin(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id_knjige' => 'required|exists:knjige,id',
-             'id_clana' => 'required|exists:clanovi,id',
-        ]);
-        
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Neispravni podaci.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-
-        $knjiga = Knjiga::find($request->id_knjige);
-        if (!$knjiga || $knjiga->kolicina <= 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Nema dostupnih primeraka ove knjige.',
-            ], 400);
-        }
-
-        $pozajmica = Pozajmica::create([
-            'clan_id' => $request->id_clana,
-            'knjiga_id' => $request->id_knjige,
-            'datum_pozajmice' => now(),
-            'datum_vracanja' => $request->return_date ? $request->return_date : null,
-        ]);
-
-        $knjiga->kolicina -= 1;
-        $knjiga->save();
-
-        return response()->json($pozajmica, 201);
-    }
 
     /**
      * Display the specified resource.
      */
     public function show(Pozajmica $pozajmica)
     {
-        //
+        return new PozajmicaResource($pozajmica->load('knjiga'));
     }
 
     /**
@@ -147,7 +109,7 @@ class PozajmicaController extends Controller
      */
     public function edit(Pozajmica $pozajmica)
     {
-        
+
     }
 
     /**
@@ -163,27 +125,35 @@ class PozajmicaController extends Controller
      */
     public function destroy(Pozajmica $pozajmica)
     {
-        //
+        if (!$pozajmica->datum_vracanja) {
+            $knjiga = Knjiga::find($pozajmica->knjiga_id);
+            if ($knjiga) {
+                $knjiga->increment('kolicina');
+            }
+        }
+
+        $pozajmica->delete();
+
+        return response()->json(['message' => 'Pozajmica uspešno obrisana.'], 200);
     }
 
-    public function vratiKnjigu(Request $request, $id)
+    public function vratiKnjigu($id)
     {
         $pozajmica = Pozajmica::find($id);
         if (!$pozajmica) {
-            return response()->json('Pozajmica sa datim ID ne postoji', 404);
+            return response()->json(['message' => 'Pozajmica sa datim ID ne postoji'], 404);
         }
-        if ($pozajmica->datum_vracanja!=null) {
-            return response()->json('Knjiga je vec vracena', 404);
+        if ($pozajmica->datum_vracanja != null) {
+            return response()->json(['message' => 'Knjiga je vec vracena'], 404);
         }
 
         $knjiga = Knjiga::find($pozajmica->knjiga_id);
         if ($knjiga) {
-            $knjiga->kolicina += 1;
-            $knjiga->save();
+            $knjiga->increment('kolicina');
         }
 
         $pozajmica->datum_vracanja = now();
         $pozajmica->save();
-        return response()->json('Knjiga uspesno vracena', 200);
+        return response()->json(['message' => 'Knjiga uspesno vracena'], 200);
     }
 }

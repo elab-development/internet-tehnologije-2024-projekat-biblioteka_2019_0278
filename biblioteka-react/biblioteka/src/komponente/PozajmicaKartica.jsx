@@ -14,7 +14,7 @@ function PozajmicaKartica({ pozajmica, osveziStranicu }) {
   const vratiKnjigu = async () => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/vratiKnjigu/${pozajmica.id}`,
+        `http://127.0.0.1:8000/api/admin/vratiKnjigu/${pozajmica.id}`,
         {
           method: "POST",
           headers: {
