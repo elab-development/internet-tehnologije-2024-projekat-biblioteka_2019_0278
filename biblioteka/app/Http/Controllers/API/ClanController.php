@@ -32,11 +32,13 @@ class ClanController extends Controller
      */
     public function store(Request $request)
     {
-        $clan = Clan::create([
-            'ime_prezime' => $request->ime_prezime,
-            'email' => $request->email,
-            'user_id' => $request->user_id
+        $validated = $request->validate([
+            'ime_prezime' => 'required|string|max:255',
+            'email' => 'required|email|unique:clans,email',
+            'user_id' => 'required|exists:users,id',
         ]);
+
+        $clan = Clan::create($validated);
 
         return response()->json($clan, 201);
     }
@@ -62,7 +64,16 @@ class ClanController extends Controller
      */
     public function update(Request $request, Clan $clan)
     {
-        //
+
+        $validated = $request->validate([
+            'ime_prezime' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:clans,email,' . $clan->id,
+            'user_id' => 'sometimes|exists:users,id',
+        ]);
+
+        $clan->update($validated);
+
+        return response()->json($clan, 200);
     }
 
     /**
@@ -70,6 +81,10 @@ class ClanController extends Controller
      */
     public function destroy(Clan $clan)
     {
-        //
+        $clan->delete();
+
+        return response()->json([
+            'message' => 'Clan uspešno obrisan'
+        ], 200);
     }
 }
