@@ -1,8 +1,7 @@
 import "./App.css";
-import KnjigaKartica from "./komponente/KnjigaKartica";
 import Login from "./login";
 import Navigacija from "./Navigacija";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 import PregledKnjiga from "./PregledKnjiga";
 import PregledPozajmica from "./PregledPozajmica";

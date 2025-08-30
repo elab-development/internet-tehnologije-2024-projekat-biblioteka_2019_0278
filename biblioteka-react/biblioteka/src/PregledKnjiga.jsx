@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import KnjigaKartica from "./komponente/KnjigaKartica";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -10,7 +10,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Pagination from "react-bootstrap/Pagination";
 import { useParams } from "react-router";
 
-function PregledKnjiga({ osveziStranicu, loading, clanId }) {
+function PregledKnjiga({ clanId }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredKnjige, setFilteredKnjige] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -25,7 +25,7 @@ function PregledKnjiga({ osveziStranicu, loading, clanId }) {
   const id = clanId || params.id;
 
 
-  const vratiKnjige = async (page = 1, query = "") => {
+  const vratiKnjige = useCallback(async (page = 1, query = "") => {
     setSearchLoading(true);
     let url = `http://localhost:8000/api/knjige?page=${page}`;
     if (query.trim()) {
@@ -51,11 +51,11 @@ function PregledKnjiga({ osveziStranicu, loading, clanId }) {
     } finally {
       setSearchLoading(false);
     }
-  };
+  }, [])
 
   useEffect(() => {
     vratiKnjige(1, searchQuery);
-  }, []);
+  }, [vratiKnjige]);
 
   const handleSearch = () => {
     vratiKnjige(1, searchQuery);
@@ -121,9 +121,6 @@ function PregledKnjiga({ osveziStranicu, loading, clanId }) {
     );
   };
 
-  if (loading) {
-    return <Ucitavanje />;
-  } else {
     return (
       <div>
         <Container className="container-custom">
@@ -156,7 +153,7 @@ function PregledKnjiga({ osveziStranicu, loading, clanId }) {
                       <Col key={knjiga.id}>
                         <KnjigaKartica
                           knjiga={knjiga}
-                          osveziStranicu={vratiKnjige}
+                          osveziStranicu={() => {vratiKnjige(currentPage, searchQuery)}}
                           clanId={id}
                         />
                       </Col>
@@ -173,7 +170,6 @@ function PregledKnjiga({ osveziStranicu, loading, clanId }) {
         </Container>
       </div>
     );
-  }
 }
 
 export default PregledKnjiga;

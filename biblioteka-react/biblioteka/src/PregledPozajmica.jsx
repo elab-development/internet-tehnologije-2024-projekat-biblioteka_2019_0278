@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PozajmicaKartica from "./komponente/PozajmicaKartica";
 import Ucitavanje from "./komponente/Ucitavanje";
 import Container from "react-bootstrap/Container";
@@ -7,14 +7,15 @@ import Col from "react-bootstrap/Col";
 function PregledPozajmica({}) {
   const [pozajmice, setPozajmice] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
 
-  const vratiPozajmice = () => {
+  const vratiPozajmice = useCallback(() => {
+    const token = localStorage.getItem("token");
+
     fetch("http://127.0.0.1:8000/api/pozajmice", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => {
@@ -31,7 +32,7 @@ function PregledPozajmica({}) {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  };
+  },[]);
 
   useEffect(() => {
     vratiPozajmice();
@@ -50,7 +51,7 @@ function PregledPozajmica({}) {
             return 0;
           })
           .map((pozajmica) => (
-            <Col key={pozajmica.id}>
+            <Col>
               <PozajmicaKartica key={pozajmica.id} pozajmica={pozajmica} />{" "}
             </Col>
           ))}

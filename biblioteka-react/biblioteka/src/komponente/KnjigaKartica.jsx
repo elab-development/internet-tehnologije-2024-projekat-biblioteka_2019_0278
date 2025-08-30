@@ -40,7 +40,7 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
       if (!response.ok) {
         const responseBody = await response.json();
         throw new Error(
-          responseBody.message || "Greška prilikom izbora knjige."
+          responseBody.error || "Greška prilikom izbora knjige."
         );
       }
 
@@ -71,7 +71,7 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
       if (!response.ok) {
         const responseBody = await response.json();
         throw new Error(
-          responseBody.message || "Greška prilikom rezervacije knjige."
+          responseBody.error || "Greška prilikom rezervacije knjige."
         );
       }
 
