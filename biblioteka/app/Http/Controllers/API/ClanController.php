@@ -62,29 +62,29 @@ class ClanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Clan $clan)
+    public function update(Request $request, Clan $clanovi)
     {
 
         $validated = $request->validate([
             'ime_prezime' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:clans,email,' . $clan->id,
+            'email' => 'sometimes|email|unique:clanovi,email,' . $clanovi->id,
             'user_id' => 'sometimes|exists:users,id',
         ]);
 
-        $clan->update($validated);
+        $clanovi->update($validated);
 
-        return response()->json($clan, 200);
+        return response()->json($clanovi, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Clan $clan)
+    public function destroy(Clan $clanovi)
     {
-        $clan->delete();
+        $clanovi->delete();
 
         return response()->json([
-            'message' => 'Clan uspešno obrisan'
+            'message' => 'Član uspešno obrisan'
         ], 200);
     }
 }

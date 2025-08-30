@@ -9,7 +9,7 @@ use App\Http\Controllers\API\ClanController;
 use App\Http\Controllers\API\RezervacijaController;
 
 Route::get('/knjige', [KnjigaController::class, 'index']);
-Route::get('/knjige/{id}', [KnjigaController::class, 'show']);
+Route::get('/knjige/{knjiga}', [KnjigaController::class, 'show']);
 
 
 Route::get('/pozajmice', [PozajmicaController::class, 'index'])->middleware('auth:sanctum');
@@ -24,17 +24,16 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::post('/knjige', [KnjigaController::class, 'store']);
     Route::patch('/knjige/{knjiga}', [KnjigaController::class, 'update']);
-    
     Route::resource('/clanovi', ClanController::class);
-    
-    Route::post('/vratiKnjigu/{id}', [PozajmicaController::class, 'vratiKnjigu']);
-    Route::get('/pozajmice', [PozajmicaController::class, 'indexAdmin']);
-    Route::resource('/pozajmice', PozajmicaController::class)->only(['store', 'show', 'destroy']);
     Route::get('/clanovi/{clan_id}/pozajmice', [PozajmicaController::class, 'prikaziPozajmiceZaClana']);
     Route::get('/clanovi/{clan_id}/rezervacije', [RezervacijaController::class, 'prikaziRezervacijeZaClana']);
+    Route::post('/vratiKnjigu/{id}', [PozajmicaController::class, 'vratiKnjigu']);
+    Route::get('/pozajmice', [PozajmicaController::class, 'indexAdmin']);
+    Route::get('/pozajmice/{pozajmica}', [PozajmicaController::class, 'show']);
+    Route::post('/pozajmice', [PozajmicaController::class, 'store']);
+    Route::delete('/pozajmice/{pozajmica}', [PozajmicaController::class, 'destroy']);
     Route::resource('/rezervacije', RezervacijaController::class);
     Route::post('/potvrdiRezervaciju/{id}', [RezervacijaController::class, 'potvrdiRezervaciju']);
-
     Route::post('/logout', [AuthController::class, 'logout']);
    
 });

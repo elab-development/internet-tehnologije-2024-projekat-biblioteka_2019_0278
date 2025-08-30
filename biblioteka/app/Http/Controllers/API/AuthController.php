@@ -52,7 +52,7 @@ class AuthController extends Controller
     {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()
-                ->json(['message' => 'Unauthorized'], 401);
+                ->json(['message' => 'Niste autorizovani.'], 401);
         }
 
         $user = User::where('email', $request['email'])->firstOrFail();
@@ -60,7 +60,7 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()
-            ->json(['message' => 'Hi ' . $user->name . ', welcome to 				home', 'access_token' => $token, 'token_type' => 'Bearer',]);
+            ->json(['message' => 'Zdravo, ' . $user->name . ', dobrodošli!', 'access_token' => $token, 'token_type' => 'Bearer',]);
     }
 
     public function logout(Request $request)
@@ -75,14 +75,14 @@ class AuthController extends Controller
     public function loginAdmin(Request $request)
     {
         if (!Auth::guard('admin')->attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Niste autorizovani.'], 401);
         }
 
         $admin = Admin::where('email', $request['email'])->firstOrFail();
 
         $token = $admin->createToken('auth_token')->plainTextToken;
 
-        return response()->json(['message' => 'Hi ' . $admin->name . ', welcome to admin home', 'access_token' => $token, 'token_type' => 'Bearer']);
+        return response()->json(['message' => 'Zdravo, ' . $admin->name . ', dobrodošli u Adminsku aplikaciju!', 'access_token' => $token, 'token_type' => 'Bearer']);
     }
 
 }
