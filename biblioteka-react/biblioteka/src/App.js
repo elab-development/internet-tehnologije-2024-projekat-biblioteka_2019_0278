@@ -50,7 +50,7 @@ function App() {
         <Route
           path="/admin/login"
           element={
-            <AdminLogin onAdminLogin={handleLogin} loginError={loginError} />
+            <AdminLogin />
           }
         />
         <Route path="/admin/" element={<PocetnaStranica/>}></Route>

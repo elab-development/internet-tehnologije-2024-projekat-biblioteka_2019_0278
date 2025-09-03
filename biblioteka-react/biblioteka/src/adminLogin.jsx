@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Card from 'react-bootstrap/Card';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/Card";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { useNavigate } from "react-router-dom";
 
-const AdminLogin = ({ onAdminLogin, loginError }) => {
+const AdminLogin = ({}) => {
+  const [loginError, setLoginError] = useState("");
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   const navigate = useNavigate();
@@ -18,56 +19,59 @@ const AdminLogin = ({ onAdminLogin, loginError }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const login = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/admin/login', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:8000/api/admin/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: formData.email,
-          password: formData.password
-        })
+          password: formData.password,
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Admin login failed:', errorData);
-        onAdminLogin(null);
+        console.error("Admin login failed:", errorData);
+        setLoginError("Greška prilikom prijave. Molimo pokušajte ponovo.");
+
         return;
       }
 
       const data = await response.json();
 
       if (data.access_token) {
-        localStorage.setItem('adminToken', data.access_token);
-        onAdminLogin(data.access_token);
-        console.log('Admin login successful:', data.access_token);
-        navigate('/admin'); 
+        localStorage.setItem("adminToken", data.access_token);
+        console.log("Admin login successful:", data.access_token);
+        navigate("/admin");
       } else {
-        console.error('Admin login failed:', data);
-        onAdminLogin(null);
+        console.error("Admin login failed:", data);
+        setLoginError("Greška prilikom prijave. Molimo pokušajte ponovo.");
       }
     } catch (error) {
-      console.error('Admin login error:', error);
-      onAdminLogin(null);
+      console.error("Admin login error:", error);
+      setLoginError("Greška prilikom prijave. Molimo pokušajte ponovo.");
     }
   };
 
-  // Add this function to go back to regular login
   const goToRegularLogin = () => {
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
-    <Container fluid className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+    <Container
+      fluid
+      className="d-flex justify-content-center align-items-center"
+      style={{ minHeight: "100vh" }}
+    >
       <Row className="w-100 justify-content-center">
         <Col xs={12} sm={8} md={6} lg={4}>
           <Card className="p-4 shadow">
@@ -76,8 +80,8 @@ const AdminLogin = ({ onAdminLogin, loginError }) => {
               <Form onSubmit={login}>
                 <Form.Group className="mb-3" controlId="formAdminEmail">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control 
-                    type="email" 
+                  <Form.Control
+                    type="email"
                     placeholder="Unesi admin email"
                     name="email"
                     value={formData.email}
@@ -87,15 +91,17 @@ const AdminLogin = ({ onAdminLogin, loginError }) => {
 
                 <Form.Group className="mb-3" controlId="formAdminPassword">
                   <Form.Label>Šifra</Form.Label>
-                  <Form.Control 
-                    type="password" 
+                  <Form.Control
+                    type="password"
                     placeholder="Šifra"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                   />
                   <Form.Text className="text-muted">
-                    {loginError && <span className="text-danger">{loginError}</span>}
+                    {loginError && (
+                      <span className="text-danger">{loginError}</span>
+                    )}
                   </Form.Text>
                 </Form.Group>
 
