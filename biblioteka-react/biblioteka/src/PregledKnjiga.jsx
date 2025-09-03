@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import KnjigaKartica from "./komponente/KnjigaKartica";
+import DodajKnjiguModal from "./komponente/KreirajKnjiguModal";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -14,16 +15,15 @@ function PregledKnjiga({ clanId }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredKnjige, setFilteredKnjige] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [showDodajKnjiguModal, setShowDodajKnjiguModal] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [metaLinks, setMetaLinks] = useState([]);
 
-
   const params = useParams();
   const id = clanId || params.id;
-
 
   const vratiKnjige = useCallback(async (page = 1, query = "") => {
     setSearchLoading(true);
@@ -51,7 +51,7 @@ function PregledKnjiga({ clanId }) {
     } finally {
       setSearchLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     vratiKnjige(1, searchQuery);
@@ -121,55 +121,74 @@ function PregledKnjiga({ clanId }) {
     );
   };
 
-    return (
-      <div>
-        <Container className="container-custom">
-          <Form className="mb-4">
-            <InputGroup>
-              <Form.Control
-                type="text"
-                placeholder="Pretraži po naslovu..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleSearch();
-                  }
-                }}
-              />
-              <Button variant="primary" onClick={handleSearch}>
-                Pretraži
-              </Button>
-            </InputGroup>
-          </Form>
-          {searchLoading ? (
-            <Ucitavanje />
-          ) : (
-            <>
-              <Row xs={1}>
-                {filteredKnjige && filteredKnjige.length > 0
-                  ? filteredKnjige.map((knjiga) => (
-                      <Col key={knjiga.id}>
-                        <KnjigaKartica
-                          knjiga={knjiga}
-                          osveziStranicu={() => {vratiKnjige(currentPage, searchQuery)}}
-                          clanId={id}
-                        />
-                      </Col>
-                    ))
-                  : (
-                    <Col>
-                      <p>Nema knjiga za prikaz.</p>
-                    </Col>
-                  )}
-              </Row>
-              {renderPagination()}
-            </>
-          )}
-        </Container>
-      </div>
-    );
+  return (
+    <div>
+      <Container className="container-custom">
+        {localStorage.getItem("adminToken") && (
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h2>Pregled knjiga</h2>
+            <Button
+              variant="success"
+              onClick={() => setShowDodajKnjiguModal(true)}
+            >
+              Dodaj Knjigu
+            </Button>
+          </div>
+        )}
+        <Form className="mb-4">
+          <InputGroup>
+            <Form.Control
+              type="text"
+              placeholder="Pretraži po naslovu..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSearch();
+                }
+              }}
+            />
+            <Button variant="primary" onClick={handleSearch}>
+              Pretraži
+            </Button>
+          </InputGroup>
+        </Form>
+        {searchLoading ? (
+          <Ucitavanje />
+        ) : (
+          <>
+            <Row xs={1}>
+              {filteredKnjige && filteredKnjige.length > 0 ? (
+                filteredKnjige.map((knjiga) => (
+                  <Col key={knjiga.id}>
+                    <KnjigaKartica
+                      knjiga={knjiga}
+                      osveziStranicu={() => {
+                        vratiKnjige(currentPage, searchQuery);
+                      }}
+                      clanId={id}
+                    />
+                  </Col>
+                ))
+              ) : (
+                <Col>
+                  <p>Nema knjiga za prikaz.</p>
+                </Col>
+              )}
+            </Row>
+            {renderPagination()}
+          </>
+        )}
+      </Container>
+
+      <DodajKnjiguModal
+        show={showDodajKnjiguModal}
+        onHide={() => setShowDodajKnjiguModal(false)}
+        onBookAdded={() => vratiKnjige(currentPage, searchQuery)}
+      />
+    </div>
+  );
 }
 
 export default PregledKnjiga;
