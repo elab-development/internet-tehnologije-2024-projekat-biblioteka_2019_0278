@@ -9,7 +9,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import Pagination from "react-bootstrap/Pagination";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 
 function PregledKnjiga({ clanId }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,7 +23,10 @@ function PregledKnjiga({ clanId }) {
   const [metaLinks, setMetaLinks] = useState([]);
 
   const params = useParams();
+  const location = useLocation();
   const id = clanId || params.id;
+
+  const isOnKnjigeEndpoint = location.pathname === '/admin/knjige';
 
   const vratiKnjige = useCallback(async (page = 1, query = "") => {
     setSearchLoading(true);
@@ -124,7 +127,7 @@ function PregledKnjiga({ clanId }) {
   return (
     <div>
       <Container className="container-custom">
-        {localStorage.getItem("adminToken") && (
+        {localStorage.getItem("adminToken") && isOnKnjigeEndpoint &&  (
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h2>Pregled knjiga</h2>
             <Button
