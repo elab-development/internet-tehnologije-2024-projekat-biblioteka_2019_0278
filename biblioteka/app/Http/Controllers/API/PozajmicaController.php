@@ -59,21 +59,18 @@ class PozajmicaController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id_knjige' => 'required|exists:knjige,id',
+            'clan_id' => 'sometimes|exists:clanovi,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Knjiga sa datim ID ne postoji.',
+                'message' => 'Podaci nisu validni.',
                 'errors' => $validator->errors()
             ], 422);
         }
 
-
-        $clan_id = Clan::where('user_id', auth()->id())->value('id');
-        if (!$clan_id) {
-            return response()->json('Morate biti registrovani clan da biste pozajmili knjigu', 404);
-        }
+    
 
         $knjiga = Knjiga::find($request->id_knjige);
         if (!$knjiga || $knjiga->kolicina <= 0) {
@@ -84,7 +81,7 @@ class PozajmicaController extends Controller
         }
 
         $pozajmica = Pozajmica::create([
-            'clan_id' => $clan_id,
+            'clan_id' => $request->clan_id,
             'knjiga_id' => $request->id_knjige,
             'datum_pozajmice' => now(),
             'datum_vracanja' => $request->return_date ? $request->return_date : null,

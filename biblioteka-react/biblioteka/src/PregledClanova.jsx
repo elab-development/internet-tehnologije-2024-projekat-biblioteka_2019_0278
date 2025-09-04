@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import ClanKartica from "./komponente/ClanKartica";
 import Ucitavanje from "./komponente/Ucitavanje";
-import Modal from "react-bootstrap/Modal";
+import DodajClanaModal from "./komponente/DodajClanaModal";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -16,6 +16,7 @@ import useToggle from "./hooks/useToggle";
 function PregledClanova() {
   const [clanovi, setClanovi] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDodajClanaModal, setShowDodajClanaModal] = useState(false);
   const token = localStorage.getItem("adminToken");
   const [selectedClanId, setSelectedClanId] = useState(null);
 
@@ -86,21 +87,35 @@ function PregledClanova() {
     return <Ucitavanje />;
   }
 
-  return clanovi.length > 0 ? (
+  return (
     <>
       <Container className="container-custom">
-        <Row xs={1}>
-          {clanovi.map((clan) => (
-            <Col key={clan.id}>
-              <ClanKartica
-                clan={clan}
-                onOpenPozajmice={openPozajmiceModal}
-                onOpenKnjige={openKnjigeModal}
-                onOpenRezervacije={openRezervacijeModal}
-              />
-            </Col>
-          ))}
-        </Row>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2>Pregled članova</h2>
+          <Button
+            variant="success"
+            onClick={() => setShowDodajClanaModal(true)}
+          >
+            Dodaj Člana
+          </Button>
+        </div>
+        {clanovi.length > 0 ? (
+          <Row xs={1}>
+            {clanovi.map((clan) => (
+              <Col key={clan.id}>
+                <ClanKartica
+                  clan={clan}
+                  onOpenPozajmice={openPozajmiceModal}
+                  onOpenKnjige={openKnjigeModal}
+                  onOpenRezervacije={openRezervacijeModal}
+                  onDelete={vratiClanove}
+                />
+              </Col>
+            ))}
+          </Row>
+        ) : (
+          <p>Nema članova za prikaz.</p>
+        )}
       </Container>
 
       <ModalPregled
@@ -138,9 +153,12 @@ function PregledClanova() {
           <p>Učitavanje...</p>
         )}
       </ModalPregled>
+      <DodajClanaModal
+        show={showDodajClanaModal}
+        onHide={() => setShowDodajClanaModal(false)}
+        onClanAdded={vratiClanove}
+      />
     </>
-  ) : (
-    <p>Nema članova za prikaz.</p>
   );
 }
 

@@ -1,58 +1,57 @@
-import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
 
 const KreirajKnjiguModal = ({ show, onHide, onBookAdded }) => {
-
   const token = localStorage.getItem("adminToken");
   const [formData, setFormData] = useState({
-    naslov: '',
-    pisac: '',
-    kolicina: 1
+    naslov: "",
+    pisac: "",
+    kolicina: 1,
   });
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/admin/knjige', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/api/admin/knjige", {
+        method: "POST",
         headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        body: JSON.stringify(formData)
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         setFormData({
-          naslov: '',
-          pisac: '',
-          kolicina: 1
+          naslov: "",
+          pisac: "",
+          kolicina: 1,
         });
         onHide();
         if (onBookAdded) {
           onBookAdded();
         }
-        console.log('Knjiga je uspešno dodana!');
+        console.log("Knjiga je uspešno dodana!");
       } else {
-        console.error('Greška pri dodavanju knjige');
+        console.error("Greška pri dodavanju knjige");
       }
     } catch (error) {
-      console.error('Greška:', error);
+      console.error("Greška:", error);
     }
   };
 
   const handleClose = () => {
     setFormData({
-      naslov: '',
-      pisac: '',
-      kolicina: 1
+      naslov: "",
+      pisac: "",
+      kolicina: 1,
     });
     onHide();
   };
@@ -100,8 +99,8 @@ const KreirajKnjiguModal = ({ show, onHide, onBookAdded }) => {
         <Button variant="secondary" onClick={handleClose}>
           Otkaži
         </Button>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={handleSubmit}
           disabled={!formData.naslov || !formData.pisac}
         >

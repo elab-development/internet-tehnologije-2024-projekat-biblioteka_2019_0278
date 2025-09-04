@@ -7,7 +7,7 @@ import Form from "react-bootstrap/Form";
 import ModalPoruka from "./ModalPoruka";
 
 function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken") ? localStorage.getItem("adminToken") : localStorage.getItem("token");
   const loggedIn = localStorage.getItem("token") !== null;
   const loggedInAdmin = localStorage.getItem("adminToken") !== null;
 
@@ -32,7 +32,7 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
           },
           body: JSON.stringify({
             id_knjige: knjiga.id,
-            id_clana: clanId,
+            clan_id: clanId,
           }),
         }
       );
