@@ -83,10 +83,6 @@ function PregledClanova() {
     setSelectedClanId(null);
   };
 
-  if (loading) {
-    return <Ucitavanje />;
-  }
-
   return (
     <>
       <Container className="container-custom">
@@ -99,7 +95,9 @@ function PregledClanova() {
             Dodaj Člana
           </Button>
         </div>
-        {clanovi.length > 0 ? (
+        {loading ? (
+          Ucitavanje()
+        ) : clanovi.length > 0 ? (
           <Row xs={1}>
             {clanovi.map((clan) => (
               <Col key={clan.id}>

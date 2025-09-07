@@ -37,4 +37,4 @@ Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
    
 });
- Route::post('admin/login', [AuthController::class, 'loginAdmin']);
+ Route::post('admin/login', action: [AuthController::class, 'loginAdmin']);
