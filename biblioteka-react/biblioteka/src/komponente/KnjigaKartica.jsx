@@ -5,15 +5,16 @@ import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import ModalPoruka from "./ModalPoruka";
+import useToggle from "../hooks/useToggle";
 
 function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
   const token = localStorage.getItem("adminToken") ? localStorage.getItem("adminToken") : localStorage.getItem("token");
   const loggedIn = localStorage.getItem("token") !== null;
   const loggedInAdmin = localStorage.getItem("adminToken") !== null;
 
-  const [showModal, setShowModal] = useState(false);
+  const modalPorukaPrikaz = useToggle();
   const [modalPoruka, setModalPoruka] = useState("");
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const modalUpdateKnjiga = useToggle();
   const [formData, setFormData] = useState({
     naslov: "",
     pisac: "",
@@ -45,12 +46,12 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
       }
 
       setModalPoruka("Knjiga je uspešno izabrana.");
-      setShowModal(true);
+      modalPorukaPrikaz.setTrue();
       const data = await response.json();
       return data;
     } catch (error) {
       setModalPoruka(error.message || "Greška prilikom izbora knjige.");
-      setShowModal(true);
+      modalPorukaPrikaz.setTrue();
       console.error("Error:", error);
     }
   };
@@ -76,12 +77,12 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
       }
 
       setModalPoruka("Knjiga je uspešno rezervisana.");
-      setShowModal(true);
+      modalPorukaPrikaz.setTrue();
       const data = await response.json();
       return data;
     } catch (error) {
       setModalPoruka(error.message || "Greška prilikom rezervacije knjige.");
-      setShowModal(true);
+      modalPorukaPrikaz.setTrue();
       console.error("Error:", error);
     }
   };
@@ -92,7 +93,7 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
       pisac: knjiga.pisac,
       kolicina: knjiga.kolicina,
     });
-    setShowUpdateModal(true);
+    modalUpdateKnjiga.setTrue();
   };
 
   const handleFormChange = (e) => {
@@ -125,13 +126,13 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
         throw new Error(errorMessages || "Greška prilikom ažuriranja knjige.");
       }
 
-      setShowUpdateModal(false);
+      modalUpdateKnjiga.setFalse();
       setModalPoruka(data.message || "Knjiga je uspešno ažurirana.");
-      setShowModal(true);
+      modalPorukaPrikaz.setTrue();
     } catch (error) {
-      setShowUpdateModal(false);
+      modalUpdateKnjiga.setFalse();
       setModalPoruka(error.message);
-      setShowModal(true);
+      modalPorukaPrikaz.setTrue();
       console.error("Error:", error);
     }
   };
@@ -181,15 +182,15 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
       </Card>
 
       <ModalPoruka
-        show={showModal}
+        show={modalPorukaPrikaz.value}
         onClose={() => {
-          setShowModal(false);
+          modalPorukaPrikaz.setFalse();
           osveziStranicu();
         }}
         poruka={modalPoruka}
       />
 
-      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+      <Modal show={modalUpdateKnjiga.value} onHide={() => modalUpdateKnjiga.setFalse()}>
         <Modal.Header closeButton>
           <Modal.Title>Ažuriraj knjigu: {knjiga.naslov}</Modal.Title>
         </Modal.Header>
@@ -225,7 +226,7 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>
+          <Button variant="secondary" onClick={() => modalUpdateKnjiga.setFalse()}>
             Zatvori
           </Button>
           <Button variant="primary" onClick={azurirajKnjigu}>

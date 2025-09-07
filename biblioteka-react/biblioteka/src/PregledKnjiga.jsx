@@ -10,12 +10,13 @@ import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import Pagination from "react-bootstrap/Pagination";
 import { useLocation, useParams } from "react-router";
+import useToggle from "./hooks/useToggle";
 
 function PregledKnjiga({ clanId }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredKnjige, setFilteredKnjige] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [showDodajKnjiguModal, setShowDodajKnjiguModal] = useState(false);
+  const dodajKnjiguModal = useToggle();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
@@ -132,7 +133,7 @@ function PregledKnjiga({ clanId }) {
             <h2>Pregled knjiga</h2>
             <Button
               variant="success"
-              onClick={() => setShowDodajKnjiguModal(true)}
+              onClick={() => dodajKnjiguModal.setTrue}
             >
               Dodaj Knjigu
             </Button>
@@ -186,8 +187,8 @@ function PregledKnjiga({ clanId }) {
       </Container>
 
       <DodajKnjiguModal
-        show={showDodajKnjiguModal}
-        onHide={() => setShowDodajKnjiguModal(false)}
+        show={dodajKnjiguModal.value}
+        onHide={() => dodajKnjiguModal.setFalse}
         onBookAdded={() => vratiKnjige(currentPage, searchQuery)}
       />
     </div>

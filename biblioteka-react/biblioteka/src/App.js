@@ -15,8 +15,6 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loginError, setLoginError] = useState("");
 
-
-
   const handleLogin = (token) => {
     if (!token) {
       setLoginError("Greška prilikom prijave. Molimo pokušajte ponovo.");
@@ -32,45 +30,34 @@ function App() {
     <BrowserRouter>
       <Navigacija loggedIn={loggedIn} />
       <Routes>
-        <Route path="/" element={<PocetnaStranica/>}></Route>
-        <Route
-          path="/knjige"
-          element={
-            <PregledKnjiga
-              loggedIn={loggedIn}
-            />
-          }
-        />
+        <Route path="/" element={<PocetnaStranica />}></Route>
+        <Route path="/knjige" element={<PregledKnjiga loggedIn={loggedIn} />} />
         <Route
           path="/login"
           element={<Login onLogin={handleLogin} loginError={loginError} />}
         />
         <Route path="/pozajmice" element={<PregledPozajmica />} />
         <Route path="/rezervacije" element={<PregledRezervacija />} />
-        <Route
-          path="/admin/login"
-          element={
-            <AdminLogin />
-          }
-        />
-        <Route path="/admin/" element={<PocetnaStranica/>}></Route>
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/" element={<PocetnaStranica />}></Route>
 
-       <Route
+        <Route
           path="/admin/knjige"
-          element={
-            <PregledKnjiga
-              loggedIn={loggedIn}
-            />
-          }
+          element={<PregledKnjiga loggedIn={loggedIn} />}
         />
-        <Route path="/admin/clanovi/" element={<PregledClanova  />}/>
-        <Route path="/admin/clanovi/:id/pozajmice" element={<PregledPozajmicaAdmin/>} />
-        <Route path="/admin/clanovi/:id/knjige" element={<PregledKnjiga 
-              loggedIn={loggedIn}
-             />} />
-        <Route path="/admin/clanovi/:id/rezervacije" element={<PregledRezervacija 
-              
-             />} />
+        <Route path="/admin/clanovi/" element={<PregledClanova />} />
+        <Route
+          path="/admin/clanovi/:id/pozajmice"
+          element={<PregledPozajmicaAdmin />}
+        />
+        <Route
+          path="/admin/clanovi/:id/knjige"
+          element={<PregledKnjiga loggedIn={loggedIn} />}
+        />
+        <Route
+          path="/admin/clanovi/:id/rezervacije"
+          element={<PregledRezervacija />}
+        />
       </Routes>
     </BrowserRouter>
   );

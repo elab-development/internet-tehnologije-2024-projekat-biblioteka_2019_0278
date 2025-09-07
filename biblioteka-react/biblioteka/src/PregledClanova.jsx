@@ -16,13 +16,13 @@ import useToggle from "./hooks/useToggle";
 function PregledClanova() {
   const [clanovi, setClanovi] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showDodajClanaModal, setShowDodajClanaModal] = useState(false);
   const token = localStorage.getItem("adminToken");
   const [selectedClanId, setSelectedClanId] = useState(null);
 
   const pozajmiceModal = useToggle();
   const knjigeModal = useToggle();
   const rezervacijeModal = useToggle();
+  const dodajClanaModal = useToggle();
 
   const vratiClanove = () => {
     fetch("http://127.0.0.1:8000/api/admin/clanovi", {
@@ -90,7 +90,7 @@ function PregledClanova() {
           <h2>Pregled članova</h2>
           <Button
             variant="success"
-            onClick={() => setShowDodajClanaModal(true)}
+            onClick={() => dodajClanaModal.setTrue()}
           >
             Dodaj Člana
           </Button>
@@ -152,8 +152,8 @@ function PregledClanova() {
         )}
       </ModalPregled>
       <DodajClanaModal
-        show={showDodajClanaModal}
-        onHide={() => setShowDodajClanaModal(false)}
+        show={dodajClanaModal.value}
+        onHide={() => dodajClanaModal.setFalse()}
         onClanAdded={vratiClanove}
       />
     </>

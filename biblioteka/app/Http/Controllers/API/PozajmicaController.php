@@ -59,7 +59,7 @@ class PozajmicaController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id_knjige' => 'required|exists:knjige,id',
-            'clan_id' => 'sometimes|exists:clanovi,id'
+            'clan_id' => 'required|exists:clanovi,id'
         ]);
 
         if ($validator->fails()) {
