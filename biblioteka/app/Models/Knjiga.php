@@ -9,19 +9,12 @@ class Knjiga extends Model
 {
 
     protected const KATEGORIJE_ENUM = [
-        'fikcija',
-        'filozofija',
-        'naucna_fantastika',
-        'klasici',
-        'triler',
-        'istorija',
-        'nauka',
-        'drama',
-        'komedija',
-        'decija_knjiga',
-        'popularna_psihologija',
-        'prirucnik',
-        'ostalo'
+        'Fikcija',
+        'Filozofija',
+        'Klasici',
+        'Decije',
+        'Ostalo'
+
     ];
 
     /** @use HasFactory<\Database\Factories\KnjigaFactory> */
@@ -47,22 +40,5 @@ class Knjiga extends Model
         return self::KATEGORIJE_ENUM;
     }
 
-    public static function getKategorijeOptions()
-    {
-        return [
-            'fikcija' => 'Fikcija',
-            'filozofija' => 'Filozofija',
-            'naucna_fantastika' => 'Naučna fantastika',
-            'klasici' => 'Klasici',
-            'triler' => 'Triler',
-            'istorija' => 'Istorija',
-            'nauka' => 'Nauka',
-            'drama' => 'Drama',
-            'komedija' => 'Komedija',
-            'decija_knjiga' => 'Dečija knjiga',
-            'popularna_psihologija' => 'Popularna psihologija',
-            'prirucnik' => 'Priručnik',
-            'ostalo' => 'Ostalo'
-        ];
-    }
+
 }

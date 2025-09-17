@@ -37,7 +37,7 @@ class KnjigaController extends Controller
     public function getKategorije()
     {
         return response()->json([
-            'kategorije' => Knjiga::getKategorijeOptions()
+            'kategorije' => Knjiga::getKategorijeValues()
         ]);
     }
 

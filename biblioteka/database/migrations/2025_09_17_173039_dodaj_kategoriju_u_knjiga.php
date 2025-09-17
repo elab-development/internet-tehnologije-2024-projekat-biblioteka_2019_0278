@@ -12,19 +12,12 @@ return new class extends Migration {
     {
         Schema::table('knjige', function (Blueprint $table) {
             $table->enum('kategorija', [
-                'fikcija',
-                'filozofija',
-                'naucna_fantastika',
-                'klasici',
-                'triler',
-                'istorija',
-                'nauka',
-                'drama',
-                'komedija',
-                'decija_knjiga',
-                'popularna_psihologija',
-                'prirucnik',
-                'ostalo'
+                'Fikcija',
+                'Filozofija',
+                'Klasici',
+                'Decije',
+                'Ostalo'
+
             ])->after('pisac');
 
 
