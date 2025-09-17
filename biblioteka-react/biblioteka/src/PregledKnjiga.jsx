@@ -14,6 +14,8 @@ import useToggle from "./hooks/useToggle";
 
 function PregledKnjiga({ clanId }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedKategorija, setSelectedKategorija] = useState("");
+  const [kategorije, setKategorije] = useState([]);
   const [filteredKnjige, setFilteredKnjige] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const dodajKnjiguModal = useToggle();
@@ -27,35 +29,62 @@ function PregledKnjiga({ clanId }) {
   const location = useLocation();
   const id = clanId || params.id;
 
-  const isOnKnjigeEndpoint = location.pathname === '/admin/knjige';
+  const isOnKnjigeEndpoint = location.pathname === "/admin/knjige";
 
-  const vratiKnjige = useCallback(async (page = 1, query = "") => {
-    setSearchLoading(true);
-    let url = `http://localhost:8000/api/knjige?page=${page}`;
-    if (query.trim()) {
-      url += `&titleQuery=${encodeURIComponent(query)}`;
-    }
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Greška prilikom pretrage.");
-      const result = await response.json();
-      setFilteredKnjige(result.data || []);
-      setCurrentPage(result.meta.current_page);
-      setLastPage(result.meta.last_page);
-      setTotal(result.meta.total);
-      setMetaLinks(result.meta.links || []);
-    } catch (error) {
-      setFilteredKnjige([]);
-      console.error(error);
-    } finally {
-      setSearchLoading(false);
-    }
+  useEffect(() => {
+    const fetchKategorije = async () => {
+      try {
+        let url = `http://localhost:8000/api/knjige/kategorije`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+          },
+        });
+        if (response.ok) {
+          const result = await response.json();
+          setKategorije(result.kategorije || {});
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchKategorije();
   }, []);
+
+  const vratiKnjige = useCallback(
+    async (page = 1, query = "", kategorija = "") => {
+      setSearchLoading(true);
+      let url = `http://localhost:8000/api/knjige?page=${page}`;
+      if (query.trim()) {
+        url += `&titleQuery=${encodeURIComponent(query)}`;
+      }
+      if (kategorija.trim()) {
+        url += `&kategorija=${encodeURIComponent(kategorija)}`;
+      }
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) throw new Error("Greška prilikom pretrage.");
+        const result = await response.json();
+        setFilteredKnjige(result.data || []);
+        setCurrentPage(result.meta.current_page);
+        setLastPage(result.meta.last_page);
+        setTotal(result.meta.total);
+        setMetaLinks(result.meta.links || []);
+      } catch (error) {
+        setFilteredKnjige([]);
+        console.error(error);
+      } finally {
+        setSearchLoading(false);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     vratiKnjige(1, searchQuery);
@@ -65,9 +94,27 @@ function PregledKnjiga({ clanId }) {
     vratiKnjige(1, searchQuery);
   };
 
+  const handleKategorijaChange = (e) => {
+    const newKategorija = e.target.value;
+    console.log(e.target.value);
+    setSelectedKategorija(newKategorija);
+    setCurrentPage(1);
+    vratiKnjige(1, searchQuery, newKategorija);
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setSelectedKategorija("");
+    setCurrentPage(1);
+    vratiKnjige(1, "", "");
+  };
   const handlePageChange = (page) => {
     vratiKnjige(page, searchQuery);
   };
+
+  const handleOpenKreirajKnjiguModal = () => {
+    dodajKnjiguModal.setTrue();
+  }
 
   // Use meta.links for pagination rendering
   const renderPagination = () => {
@@ -128,35 +175,60 @@ function PregledKnjiga({ clanId }) {
   return (
     <div>
       <Container className="container-custom">
-        {localStorage.getItem("adminToken") && isOnKnjigeEndpoint &&  (
+        {localStorage.getItem("adminToken") && isOnKnjigeEndpoint && (
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h2>Pregled knjiga</h2>
-            <Button
-              variant="success"
-              onClick={() => dodajKnjiguModal.setTrue}
-            >
+            <Button variant="success" onClick={handleOpenKreirajKnjiguModal}>
               Dodaj Knjigu
             </Button>
           </div>
         )}
         <Form className="mb-4">
-          <InputGroup>
-            <Form.Control
-              type="text"
-              placeholder="Pretraži po naslovu..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSearch();
-                }
-              }}
-            />
-            <Button variant="primary" onClick={handleSearch}>
-              Pretraži
-            </Button>
-          </InputGroup>
+          <Row className="g-2 align-items-end">
+            <Col md={6}>
+              <InputGroup>
+                <Form.Control
+                  type="text"
+                  placeholder="Pretraži po naslovu..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSearch();
+                    }
+                  }}
+                />
+                <Button variant="primary" onClick={handleSearch}>
+                  Pretraži
+                </Button>
+              </InputGroup>
+            </Col>
+
+            <Col md={4}>
+              <Form.Select
+                value={selectedKategorija}
+                onChange={handleKategorijaChange}
+              >
+                <option value="">Sve kategorije</option>
+                {kategorije.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+
+            <Col md={2}>
+              <Button
+                variant="secondary"
+                onClick={handleClearFilters}
+                className="w-100"
+              >
+                Očisti
+              </Button>
+            </Col>
+          </Row>
         </Form>
         {searchLoading ? (
           <Ucitavanje />
@@ -188,8 +260,10 @@ function PregledKnjiga({ clanId }) {
 
       <DodajKnjiguModal
         show={dodajKnjiguModal.value}
-        onHide={() => dodajKnjiguModal.setFalse}
-        onBookAdded={() => vratiKnjige(currentPage, searchQuery)}
+        onHide={() => dodajKnjiguModal.setFalse()}
+        onBookAdded={() =>
+          vratiKnjige(currentPage, searchQuery, selectedKategorija)
+        }
       />
     </div>
   );

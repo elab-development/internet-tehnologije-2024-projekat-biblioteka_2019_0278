@@ -18,17 +18,23 @@ class KnjigaController extends Controller
     public function index()
     {
         $titleQuery = request()->titleQuery;
+        $kategorija = request()->kategorija;
         $perPage = 5;
 
-        if (!$titleQuery) {
-            $paginated = Knjiga::paginate($perPage);
-            return new KnjigaCollection($paginated);
+
+        $query = Knjiga::query();
+        if ($titleQuery) {
+            $query->where('naslov', 'like', '%' . $titleQuery . '%');
         }
 
-        $paginated = Knjiga::where('naslov', 'like', '%' . $titleQuery . '%')->paginate($perPage);
+        if ($kategorija) {
+            $query->where('kategorija', $kategorija);
+        }
+
+        $paginated = $query->paginate($perPage);
 
         if ($paginated->isEmpty()) {
-            return response()->json('Ne postoji knjiga sa naslovom po datom kriterijumu.', 404);
+            return response()->json('Ne postoji knjiga po datom kriterijumu.', 404);
         }
 
         return new KnjigaCollection($paginated);
@@ -59,7 +65,7 @@ class KnjigaController extends Controller
             'naslov' => 'required|string|max:255',
             'pisac' => 'required|string|max:255',
             'kolicina' => 'required|integer|min:1',
-            'kategorija' => 'required|in' . implode(',', Knjiga::getKategorijeValues()),
+            'kategorija' => 'required|in:' . implode(',', Knjiga::getKategorijeValues()),
         ]);
 
         $knjiga = Knjiga::create([
