@@ -5,7 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Models\Knjiga;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\KnjigaCollection;;
+use App\Http\Resources\KnjigaCollection;
+;
 use App\Http\Resources\KnjigaResource;
 
 
@@ -33,13 +34,20 @@ class KnjigaController extends Controller
         return new KnjigaCollection($paginated);
     }
 
+    public function getKategorije()
+    {
+        return response()->json([
+            'kategorije' => Knjiga::getKategorijeOptions()
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         //
-    
+
     }
 
     /**
@@ -51,12 +59,14 @@ class KnjigaController extends Controller
             'naslov' => 'required|string|max:255',
             'pisac' => 'required|string|max:255',
             'kolicina' => 'required|integer|min:1',
+            'kategorija' => 'required|in' . implode(',', Knjiga::getKategorijeValues()),
         ]);
 
         $knjiga = Knjiga::create([
             'naslov' => $request->naslov,
             'pisac' => $request->pisac,
             'kolicina' => $request->kolicina,
+            'kategorija' => $request->kategorija,
         ]);
 
         return response()->json(['message' => 'Knjiga uspešno dodata', 'knjiga' => $knjiga], 201);
@@ -67,8 +77,8 @@ class KnjigaController extends Controller
      */
     public function show(Knjiga $knjiga)
     {
-        
-        if(is_null($knjiga)) {
+
+        if (is_null($knjiga)) {
             return response()->json('Tražena knjiga nije pronađena', 404);
         }
         return new KnjigaResource($knjiga);
@@ -93,7 +103,7 @@ class KnjigaController extends Controller
             'kolicina' => 'sometimes|required|integer|min:0',
         ]);
 
-     
+
         $knjiga->update($validatedData);
         return response()->json([
             'message' => 'Knjiga je uspešno ažurirana.',

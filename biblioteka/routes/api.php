@@ -8,6 +8,7 @@ use App\Http\Controllers\API\PozajmicaController;
 use App\Http\Controllers\API\ClanController;
 use App\Http\Controllers\API\RezervacijaController;
 
+Route::get('/knjige/kategorije', [KnjigaController::class, 'getKategorije']);
 Route::get('/knjige', [KnjigaController::class, 'index']);
 Route::get('/knjige/{knjiga}', [KnjigaController::class, 'show']);
 
@@ -35,6 +36,6 @@ Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::resource('/rezervacije', RezervacijaController::class);
     Route::post('/potvrdiRezervaciju/{id}', [RezervacijaController::class, 'potvrdiRezervaciju']);
     Route::post('/logout', [AuthController::class, 'logout']);
-   
+
 });
- Route::post('admin/login', action: [AuthController::class, 'loginAdmin']);
+Route::post('admin/login', action: [AuthController::class, 'loginAdmin']);

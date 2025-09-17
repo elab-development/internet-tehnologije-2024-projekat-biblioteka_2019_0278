@@ -18,7 +18,8 @@ class KnjigaResource extends JsonResource
             'id' => $this->id,
             'naslov' => $this->naslov,
             'pisac' => $this->pisac,
-            'kolicina' => $this->kolicina
+            'kolicina' => $this->kolicina,
+            'kategorija' => $this->kategorija
         ];
     }
 }

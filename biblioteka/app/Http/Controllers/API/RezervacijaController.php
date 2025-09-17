@@ -32,6 +32,7 @@ class RezervacijaController extends Controller
         $rezervacije = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->where('clan_id', $clan_id)->get();
         return new RezervacijaCollection($rezervacije);
     }
+
     public function prikaziRezervacijeZaClana(Request $request, $clan_id)
     {
 

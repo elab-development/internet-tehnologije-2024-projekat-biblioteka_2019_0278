@@ -7,19 +7,62 @@ use Illuminate\Database\Eloquent\Model;
 
 class Knjiga extends Model
 {
+
+    protected const KATEGORIJE_ENUM = [
+        'fikcija',
+        'filozofija',
+        'naucna_fantastika',
+        'klasici',
+        'triler',
+        'istorija',
+        'nauka',
+        'drama',
+        'komedija',
+        'decija_knjiga',
+        'popularna_psihologija',
+        'prirucnik',
+        'ostalo'
+    ];
+
     /** @use HasFactory<\Database\Factories\KnjigaFactory> */
     use HasFactory;
-    protected $table = 'knjige'; 
+    protected $table = 'knjige';
     protected $fillable = [
         'id',
         'naslov',
         'pisac',
-        'kolicina'
+        'kolicina',
+        'kategorija'
 
     ];
 
     public function pozajmice()
     {
         return $this->hasMany(Pozajmica::class, 'knjiga_id');
+    }
+
+
+    public static function getKategorijeValues()
+    {
+        return self::KATEGORIJE_ENUM;
+    }
+
+    public static function getKategorijeOptions()
+    {
+        return [
+            'fikcija' => 'Fikcija',
+            'filozofija' => 'Filozofija',
+            'naucna_fantastika' => 'Naučna fantastika',
+            'klasici' => 'Klasici',
+            'triler' => 'Triler',
+            'istorija' => 'Istorija',
+            'nauka' => 'Nauka',
+            'drama' => 'Drama',
+            'komedija' => 'Komedija',
+            'decija_knjiga' => 'Dečija knjiga',
+            'popularna_psihologija' => 'Popularna psihologija',
+            'prirucnik' => 'Priručnik',
+            'ostalo' => 'Ostalo'
+        ];
     }
 }
