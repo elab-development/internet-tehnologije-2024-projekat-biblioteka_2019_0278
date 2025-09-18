@@ -87,11 +87,11 @@ function PregledKnjiga({ clanId }) {
   );
 
   useEffect(() => {
-    vratiKnjige(1, searchQuery);
+    vratiKnjige(1, searchQuery, selectedKategorija);
   }, [vratiKnjige]);
 
   const handleSearch = () => {
-    vratiKnjige(1, searchQuery);
+    vratiKnjige(1, searchQuery, selectedKategorija);
   };
 
   const handleKategorijaChange = (e) => {
