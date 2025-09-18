@@ -24,6 +24,22 @@ function PregledClanova() {
   const rezervacijeModal = useToggle();
   const dodajClanaModal = useToggle();
 
+  const getModalTitle = () => {
+    if (pozajmiceModal.value) {
+      return `Pozajmice člana`;
+    }
+    if (knjigeModal.value) {
+      return `Nova pozajmica`;
+    }
+    if (rezervacijeModal.value) {
+      return `Rezervacije člana`;
+    }
+    if (dodajClanaModal.value) {
+      return "Dodaj člana";
+    }
+    return null;
+  };
+
   const vratiClanove = () => {
     fetch("http://127.0.0.1:8000/api/admin/clanovi", {
       method: "GET",
@@ -88,10 +104,7 @@ function PregledClanova() {
       <Container className="container-custom">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2>Pregled članova</h2>
-          <Button
-            variant="success"
-            onClick={() => dodajClanaModal.setTrue()}
-          >
+          <Button variant="success" onClick={() => dodajClanaModal.setTrue()}>
             Dodaj Člana
           </Button>
         </div>

@@ -10,6 +10,7 @@ import PregledClanova from "./PregledClanova";
 import PregledPozajmicaAdmin from "./PregledPozajmicaAdmin";
 import PregledRezervacija from "./PregledRezervacija";
 import PocetnaStranica from "./PocetnaStranica";
+import Breadcrumbs from "./komponente/Breadcrumbs";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -29,6 +30,8 @@ function App() {
   return (
     <BrowserRouter>
       <Navigacija loggedIn={loggedIn} />
+
+      <Breadcrumbs />
       <Routes>
         <Route path="/" element={<PocetnaStranica />}></Route>
         <Route path="/knjige" element={<PregledKnjiga loggedIn={loggedIn} />} />
