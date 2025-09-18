@@ -4,6 +4,7 @@ import Ucitavanje from "./komponente/Ucitavanje";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { Button } from "react-bootstrap";
 function PregledPozajmica({}) {
   const [pozajmice, setPozajmice] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,17 +33,54 @@ function PregledPozajmica({}) {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  },[]);
+  }, []);
 
   useEffect(() => {
     vratiPozajmice();
   }, []);
+
+  const exportToCSV = () => {
+    if (!pozajmice.length) return;
+
+    const headers = [
+      "ID",
+      "Knjiga",
+      "Član",
+      "Datum pozajmice",
+      "Datum vraćanja",
+    ];
+
+    const rows = pozajmice.map((p) => [
+      p.id,
+      p.knjiga.naslov || "",
+      p.clan_id || "",
+      p.datum_pozajmice || "",
+      p.datum_vracanja || "",
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((val) => `"${val}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "pozajmice.csv");
+    link.click();
+  };
+
 
   if (loading) {
     return <Ucitavanje />;
   }
   return pozajmice.length > 0 ? (
     <Container className="container-custom">
+      <div className="d-flex justify-content-end my-3">
+        <Button variant="success" onClick={exportToCSV}>
+          Exportuj u CSV
+        </Button>
+      </div>
       <Row xs={1} md={1}>
         {pozajmice
           .sort((a, b) => {
