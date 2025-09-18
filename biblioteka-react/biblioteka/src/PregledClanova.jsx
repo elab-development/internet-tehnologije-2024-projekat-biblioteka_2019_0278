@@ -24,22 +24,6 @@ function PregledClanova() {
   const rezervacijeModal = useToggle();
   const dodajClanaModal = useToggle();
 
-  const getModalTitle = () => {
-    if (pozajmiceModal.value) {
-      return `Pozajmice člana`;
-    }
-    if (knjigeModal.value) {
-      return `Nova pozajmica`;
-    }
-    if (rezervacijeModal.value) {
-      return `Rezervacije člana`;
-    }
-    if (dodajClanaModal.value) {
-      return "Dodaj člana";
-    }
-    return null;
-  };
-
   const vratiClanove = () => {
     fetch("http://127.0.0.1:8000/api/admin/clanovi", {
       method: "GET",
