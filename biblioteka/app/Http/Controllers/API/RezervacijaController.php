@@ -29,7 +29,7 @@ class RezervacijaController extends Controller
         if (!$clan_id) {
             return response()->json('Clan nije registrovan', 404);
         }
-        $rezervacije = Rezervacija::with(['knjiga', 'clan', 'pozajmica'])->where('clan_id', $clan_id)->get();
+        $rezervacije = Rezervacija::with(relations: ['knjiga', 'clan', 'pozajmica'])->where('clan_id', $clan_id)->get();
         return new RezervacijaCollection($rezervacije);
     }
 
