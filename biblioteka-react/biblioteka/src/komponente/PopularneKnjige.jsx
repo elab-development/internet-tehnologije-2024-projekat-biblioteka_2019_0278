@@ -5,8 +5,7 @@ function TrendingBooks() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const apiKey = "5E5mmi1IKFNrvlXLiGgl9L1vHcCyjone";
-
+  const apiKey = process.env.REACT_APP_NYTIMES_API_KEY;
   useEffect(() => {
     const fetchTrendingBooks = async () => {
       try {
