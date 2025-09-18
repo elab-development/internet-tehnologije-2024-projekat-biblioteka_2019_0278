@@ -19,6 +19,7 @@ class KnjigaController extends Controller
     {
         $titleQuery = request()->titleQuery;
         $kategorija = request()->kategorija;
+        $sortOrder = request()->sortOrder;
         $perPage = 5;
 
 
@@ -29,6 +30,10 @@ class KnjigaController extends Controller
 
         if ($kategorija) {
             $query->where('kategorija', $kategorija);
+        }
+
+        if ($sortOrder) {
+            $query->orderBy('kolicina', $sortOrder);
         }
 
         $paginated = $query->paginate($perPage);

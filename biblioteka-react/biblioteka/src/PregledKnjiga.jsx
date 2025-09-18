@@ -18,6 +18,8 @@ function PregledKnjiga({ clanId }) {
   const [kategorije, setKategorije] = useState([]);
   const [filteredKnjige, setFilteredKnjige] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [sortOrder, setSortOrder] = useState("asc");
+
   const dodajKnjiguModal = useToggle();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,7 +55,7 @@ function PregledKnjiga({ clanId }) {
   }, []);
 
   const vratiKnjige = useCallback(
-    async (page = 1, query = "", kategorija = "") => {
+    async (page = 1, query = "", kategorija = "", sortOrder="") => {
       setSearchLoading(true);
       let url = `http://localhost:8000/api/knjige?page=${page}`;
       if (query.trim()) {
@@ -61,6 +63,9 @@ function PregledKnjiga({ clanId }) {
       }
       if (kategorija.trim()) {
         url += `&kategorija=${encodeURIComponent(kategorija)}`;
+      }
+      if (sortOrder.trim()) {
+        url += `&sortOrder=${encodeURIComponent(sortOrder)}`;
       }
       try {
         const response = await fetch(url, {
@@ -87,11 +92,11 @@ function PregledKnjiga({ clanId }) {
   );
 
   useEffect(() => {
-    vratiKnjige(1, searchQuery, selectedKategorija);
+    vratiKnjige(1, searchQuery, selectedKategorija, sortOrder);
   }, [vratiKnjige]);
 
   const handleSearch = () => {
-    vratiKnjige(1, searchQuery, selectedKategorija);
+    vratiKnjige(1, searchQuery, selectedKategorija, sortOrder);
   };
 
   const handleKategorijaChange = (e) => {
@@ -99,22 +104,30 @@ function PregledKnjiga({ clanId }) {
     console.log(e.target.value);
     setSelectedKategorija(newKategorija);
     setCurrentPage(1);
-    vratiKnjige(1, searchQuery, newKategorija);
+    vratiKnjige(1, searchQuery, newKategorija, sortOrder);
   };
 
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedKategorija("");
     setCurrentPage(1);
-    vratiKnjige(1, "", "");
+  
+    vratiKnjige(1, "", "", sortOrder);
   };
   const handlePageChange = (page) => {
-    vratiKnjige(page, searchQuery);
+    vratiKnjige(page, searchQuery, selectedKategorija, sortOrder);
   };
 
   const handleOpenKreirajKnjiguModal = () => {
     dodajKnjiguModal.setTrue();
-  }
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    vratiKnjige(1, searchQuery, selectedKategorija, sortOrder === "asc" ? "desc" : "asc");
+  };
+
+  
 
   // Use meta.links for pagination rendering
   const renderPagination = () => {
@@ -184,8 +197,8 @@ function PregledKnjiga({ clanId }) {
           </div>
         )}
         <Form className="mb-4">
-          <Row className="g-2 align-items-end">
-            <Col md={6}>
+            <Row className="g-2 align-items-end">
+            <Col md={5}> {/* Changed from 6 to 5 */}
               <InputGroup>
                 <Form.Control
                   type="text"
@@ -205,7 +218,7 @@ function PregledKnjiga({ clanId }) {
               </InputGroup>
             </Col>
 
-            <Col md={4}>
+            <Col md={4}> {/* No change, still 4 */}
               <Form.Select
                 value={selectedKategorija}
                 onChange={handleKategorijaChange}
@@ -219,13 +232,21 @@ function PregledKnjiga({ clanId }) {
               </Form.Select>
             </Col>
 
-            <Col md={2}>
+            <Col md={3} className="d-flex gap-2"> {/* Changed from 2 to 3 */}
               <Button
                 variant="secondary"
                 onClick={handleClearFilters}
                 className="w-100"
               >
                 Očisti
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={toggleSortOrder}
+                className="w-100"
+              >
+                {/* Text is a bit long, so it needs more space */}
+                Količina ({sortOrder === "asc" ? "▲" : "▼"})
               </Button>
             </Col>
           </Row>
@@ -241,7 +262,7 @@ function PregledKnjiga({ clanId }) {
                     <KnjigaKartica
                       knjiga={knjiga}
                       osveziStranicu={() => {
-                        vratiKnjige(currentPage, searchQuery);
+                        vratiKnjige(currentPage, searchQuery, selectedKategorija, sortOrder);
                       }}
                       clanId={id}
                     />
@@ -262,7 +283,7 @@ function PregledKnjiga({ clanId }) {
         show={dodajKnjiguModal.value}
         onHide={() => dodajKnjiguModal.setFalse()}
         onBookAdded={() =>
-          vratiKnjige(currentPage, searchQuery, selectedKategorija)
+          vratiKnjige(currentPage, searchQuery, selectedKategorija, sortOrder)
         }
       />
     </div>
