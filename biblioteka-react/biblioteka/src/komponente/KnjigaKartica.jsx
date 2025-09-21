@@ -15,6 +15,53 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
   const modalPorukaPrikaz = useToggle();
   const [modalPoruka, setModalPoruka] = useState("");
   const modalUpdateKnjiga = useToggle();
+  const modalObrisiKnjigu = useToggle();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = () => {
+    modalObrisiKnjigu.setTrue();
+  };
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      const adminToken = localStorage.getItem("adminToken");
+      const response = await fetch(
+        `http://localhost:8000/api/admin/knjige/${knjiga.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        modalObrisiKnjigu.setFalse();
+        setModalPoruka("Knjiga je uspešno obrisana.");
+        modalPorukaPrikaz.setTrue();
+        if (typeof osveziStranicu === "function") {
+          osveziStranicu();
+        }
+      } else {
+        const data = await response.json().catch(() => ({}));
+        const errorMsg = data.message || data.error || "Greška pri brisanju knjige.";
+        setModalPoruka(errorMsg);
+        modalPorukaPrikaz.setTrue();
+      }
+    } catch (error) {
+      setModalPoruka(error.message || "Greška pri brisanju knjige.");
+      modalPorukaPrikaz.setTrue();
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    modalObrisiKnjigu.setFalse();
+  };
   const [formData, setFormData] = useState({
     naslov: "",
     pisac: "",
@@ -140,6 +187,18 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
   return (
     <>
       <Card className="library-card">
+        {loggedInAdmin && !clanId && (
+          <Button
+            variant="outline-danger"
+            size="sm"
+            className="position-absolute"
+            style={{ top: "10px", right: "10px", zIndex: 1 }}
+            onClick={handleDeleteClick}
+            title="Obriši knjigu"
+          >
+            ×
+          </Button>
+        )}
         <Card.Body>
           <Card.Title className="text-truncate" title={knjiga.naslov}>
             {knjiga.naslov}
@@ -189,6 +248,29 @@ function KnjigaKartica({ knjiga, osveziStranicu, clanId }) {
         }}
         poruka={modalPoruka}
       />
+
+  <Modal show={modalObrisiKnjigu.value} onHide={handleDeleteCancel} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Potvrda brisanja</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Da li ste sigurni da želite da obrišete knjigu <strong>{knjiga.naslov}</strong>?
+          <br />
+          Ova akcija se ne može poništiti.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleDeleteCancel}>
+            Otkaži
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleDeleteConfirm}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Brisanje..." : "Obriši"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <Modal show={modalUpdateKnjiga.value} onHide={() => modalUpdateKnjiga.setFalse()}>
         <Modal.Header closeButton>

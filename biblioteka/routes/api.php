@@ -25,6 +25,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::post('/knjige', [KnjigaController::class, 'store']);
     Route::patch('/knjige/{knjiga}', [KnjigaController::class, 'update']);
+    Route::delete('/knjige/{knjiga}', [KnjigaController::class, 'destroy']);
     Route::resource('/clanovi', ClanController::class);
     Route::get('/clanovi/{clan_id}/pozajmice', [PozajmicaController::class, 'prikaziPozajmiceZaClana']);
     Route::get('/clanovi/{clan_id}/rezervacije', [RezervacijaController::class, 'prikaziRezervacijeZaClana']);

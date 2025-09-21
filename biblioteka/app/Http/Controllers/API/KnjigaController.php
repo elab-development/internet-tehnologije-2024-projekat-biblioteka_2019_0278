@@ -127,6 +127,12 @@ class KnjigaController extends Controller
      */
     public function destroy(Knjiga $knjiga)
     {
-        //
+        if (!$knjiga) {
+            return response()->json(['message' => 'Knjiga nije pronađena.'], 404);
+        }
+
+        $knjiga->delete();
+
+        return response()->json(['message' => 'Knjiga je uspešno obrisana.'], 200);
     }
 }
