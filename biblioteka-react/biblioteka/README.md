@@ -1,70 +1,158 @@
-# Getting Started with Create React App
+  
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Aplikacija za upravljanje bibliotekom
 
-## Available Scripts
+  
 
-In the project directory, you can run:
+Biblioteke predstavljaju važan stub obrazovanja, kulture i naučnog istraživanja. Njihovo
+poslovanje podrazumeva upravljanje velikim brojem knjiga, evidencijom članova i
+organizacijom procesa pozajmljivanja i vraćanja knjiga. Tradicionalni načini vođenja evidencija
+su često spori i podložni greškama, zbog čega se javlja potreba za savremenim softverskim
+rešenjima koja omogućavaju digitalizaciju i automatizaciju svih procesa.
+  
+Tema ovog rada je razvoj veb aplikacije za upravljanje bibliotekom i procesima
+pozajmice knjiga. Aplikacija je osmišljena tako da olakša rad bibliotekarima, unapredi
+komunikaciju sa korisnicima i omogući jednostavniji pristup informacijama.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Funkcionalnosti aplikacije obuhvataju:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Za bibliotekare: unos, ažuriranje i brisanje podataka o knjigama, evidenciju članova
+  biblioteke, praćenje statusa pozajmica, rezervacija i vraćenih knjiga.
+- Za korisnike: pretragu dostupnih knjiga, rezervaciju i pozajmljivanje, pregled ličnog
+  naloga i istoriju korišćenja biblioteke.
+ 
 
-### `npm test`
+## Pokretanje Laravel aplikacije (API)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  
 
-### `npm run build`
+### 1. Instalacija zavisnosti
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Neophodno je da na računaru imate instaliran **Composer** i **XAMPP** (koji uključuje MySQL i Apache).  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+U glavnom direktorijumu Laravel aplikacije pokrenuti:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
 
-### `npm run eject`
+composer install
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+````
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 2. Konfiguracija baze
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+  
 
-## Learn More
+* Pokrenuti XAMPP i startovati Apache i MySQL.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* Otvoriti [http://localhost/phpmyadmin](http://localhost/phpmyadmin) i kreirati novu bazu sa nazivom `biblioteka`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+* U fajlu `.env` podesiti parametre:
 
-### Code Splitting
+  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```env
 
-### Analyzing the Bundle Size
+DB_CONNECTION=mysql
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+DB_HOST=127.0.0.1
 
-### Making a Progressive Web App
+DB_PORT=3306
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+DB_DATABASE=biblioteka
 
-### Advanced Configuration
+DB_USERNAME=root
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+DB_PASSWORD=
 
-### Deployment
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+  
 
-### `npm run build` fails to minify
+### 3. Migracije i seed podaci
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  
+
+Pokrenuti:
+
+  
+
+```bash
+
+php artisan migrate --seed
+
+```
+
+  
+
+### 4. Startovanje servera
+
+  
+
+```bash
+
+php artisan serve
+
+```
+
+  
+
+Aplikacija će biti dostupna na adresi: [http://localhost:8000](http://localhost:8000)
+
+  
+
+---
+
+  
+
+## Pokretanje React aplikacije (frontend)
+
+  
+
+### 1. Instalacija zavisnosti
+
+  
+
+U direktorijumu React aplikacije pokrenuti:
+
+  
+
+```bash
+
+npm install
+
+```
+
+  
+
+### 2. Pokretanje aplikacije
+
+  
+
+```bash
+
+npm start
+
+```
+
+  
+
+Frontend će biti dostupan na adresi: [http://localhost:3000](http://localhost:3000)
+
+  
+
+---
+
+  
+
+## Korišćene tehnologije
+
+  
+
+* Backend: Laravel, PHP, MySQL (XAMPP)
+
+* Frontend: React, Bootstrap
+
+* Baza podataka: MySQL
